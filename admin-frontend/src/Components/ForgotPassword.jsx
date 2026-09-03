@@ -29,7 +29,7 @@ const ForgotPassword = ({ onBackToLogin }) => {
       });
 
       const data = await response.json();
-
+ 
       if (!response.ok) {
         setEmailError(data.message || "Unable to send reset link.");
         return;
@@ -84,8 +84,7 @@ const ForgotPassword = ({ onBackToLogin }) => {
             <div className="mb-5">
               <label
                 htmlFor="forgot-email"
-                className="mb-2 block text-[13px] font-medium text-[#444444]"
-              >
+                className="mb-2 block text-[13px] font-medium text-[#444444]">
                 Enter Email Address
               </label>
 

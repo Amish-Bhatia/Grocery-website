@@ -1,10 +1,12 @@
 import { useState } from "react";
 import ForgotPassword from "./ForgotPassword";
+import { useNavigate } from "react-router-dom";
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-const LoginForm = ({ setIsAuthenticated }) => {
+const LoginForm = () => {
+    const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -71,12 +73,12 @@ const LoginForm = ({ setIsAuthenticated }) => {
       setOtpError("Please enter the OTP.");
       return;
     }
-
+ 
     setOtpError("");
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:3000/verifyotp", {
+      const response = await fetch("http://localhost:3000/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp }),
@@ -89,8 +91,9 @@ const LoginForm = ({ setIsAuthenticated }) => {
         return;
       }
 
-      localStorage.setItem("token", data.token);
-      setIsAuthenticated(true);
+    localStorage.setItem("token", data.token);
+    navigate("/dashboard");
+
     } catch (err) {
       console.log("Error connecting to backend:", err);
       setOtpError("Unable to reach server. Is the backend running?");
@@ -108,10 +111,9 @@ return (
       <div className="flex w-full min-h-screen overflow-hidden bg-white">
 
        
-        <div className="flex w-full flex-col items-center justify-center px-8 py-12 sm:px-12 md:w-[48%] lg:px-16">
+        <div className="flex w-full flex-col items-center justify-center px-8 py-12 sm:px-12 md:w-[62%] lg:px-16">
           <form onSubmit={showOtp ? handleVerifyOtp : handleSubmit} className="w-full max-w-[360px]">
 
-           
             <div className="mb-9 flex justify-center">
               <div className="flex items-center gap-2">
               
@@ -121,7 +123,7 @@ return (
 
           
             <div className="mb-8 text-center">
-              <h1 className="text-[27px] font-semibold leading-tight text-[#07963d]">Welcome Back</h1>
+              <h1 className="text-[27px] font-semibold leading-tight inline-block  bg-gradient-to-r from-[#019D3E] to-[#00491B] bg-clip-text text-transparent">Welcome Back</h1>
               <p className="mt-2 text-[21px] font-medium text-[#3f3f3f]">Log In</p>
             </div>
 
@@ -180,14 +182,14 @@ return (
 
        
         <div className="hidden w-[52%] h-screen p-3 pl-0 md:block">
-          <div className="h-full w-full overflow-hidden rounded-[12px]">
-            <img src="/right-img.svg" alt="Fresh vegetables" className="h-full w-full object-cover object-center" />
+          <div className="h-200 w-150  overflow-hidden rounded-[12px]">
+            <img src="right-img.jpg" alt="Fresh vegetables" className="h-200 w-150 object-cover object-center" />
           </div>
         </div>
 
        
         <div className="w-full px-6 pb-6 md:hidden">
-          <img src="/right-img.svg" alt="Fresh vegetables" className="h-[300px] w-full rounded-[10px] object-cover object-center" />
+          <img src="right-img.jpg" alt="Fresh vegetables" className="h-[300px] w-full rounded-[10px] object-cover object-center" />
         </div>
 
       </div>

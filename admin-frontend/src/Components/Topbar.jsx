@@ -2,7 +2,7 @@ const Topbar = ({ adminName = "Amish Bhatia", adminRole = "Admin" }) => {
   const initials = adminName
     .split(" ")
     .map((n) => n[0])
-    .join("");
+    .join(""); 
 
   return (
     <div className="flex h-[64px] items-center justify-end bg-linear-to-r from-[#019D3E] to-[#00491B] px-6">
@@ -15,7 +15,7 @@ const Topbar = ({ adminName = "Amish Bhatia", adminRole = "Admin" }) => {
           <p className="text-[11px] text-white/70">{adminRole}</p>
         </div>
         <span className="text-[10px] text-white/80">▾</span>
-      </div>
+      </div>  
     </div>
   );
 };

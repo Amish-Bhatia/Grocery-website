@@ -228,7 +228,7 @@ const ResetPassword = ({ onBackToLogin }) => {
                 </button>
 
               </div>
-
+ 
               {/* Password Error */}
               {passwordError && (
                 <p className="mt-1.5 text-[11px] leading-4 text-red-600">
@@ -268,7 +268,7 @@ const ResetPassword = ({ onBackToLogin }) => {
                   className="h-[46px] w-full rounded-[7px] border border-transparent bg-[#effff1] px-4 pr-12 text-[14px] text-[#333333] placeholder:text-[#aaa] outline-none transition focus:border-[#28b957] focus:ring-2 focus:ring-[#00a63c]/10"
                 />
 
-                {/* Confirm Password Visibility Button */}
+                
                 <button
                   type="button"
                   onClick={() =>
@@ -286,7 +286,7 @@ const ResetPassword = ({ onBackToLogin }) => {
 
                   {showConfirmPassword ? (
 
-                    /* Eye Icon */
+                  
                     <svg
                       width="20"
                       height="20"
@@ -304,15 +304,14 @@ const ResetPassword = ({ onBackToLogin }) => {
                     </svg>
 
                   ) : (
-
                     <svg
                       width="20"
                       height="20"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
-                      strokeWidth="2"
-                    >
+                      strokeWidth="2" >
+
                       <path d="M3 3l18 18" />
                       <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8" />
                       <path d="M9.9 5.1A10.5 10.5 0 0 1 12 5c6.5 0 10 7 10 7a17.4 17.4 0 0 1-3.1 4.1" />
@@ -333,7 +332,7 @@ const ResetPassword = ({ onBackToLogin }) => {
 
             </div>
 
-          
+
             {message && (
               <p className="mb-5 rounded-[7px] bg-[#f1fff3] px-4 py-3 text-center text-[11px] text-[#07963d]">
                 {message}
@@ -350,7 +349,7 @@ const ResetPassword = ({ onBackToLogin }) => {
                 : "Reset Password"}
             </button>
 
-          
+
             <div className="mt-5 flex justify-center">
 
               <button
@@ -366,7 +365,7 @@ const ResetPassword = ({ onBackToLogin }) => {
           </form>
         </div>
 
-     
+
         <div className="hidden w-[52%] h-screen p-3 pl-0 md:block">
 
           <div className="h-full w-full overflow-hidden rounded-[12px]">
