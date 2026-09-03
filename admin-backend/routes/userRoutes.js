@@ -7,4 +7,4 @@ router.post("/login", login);
 router.post("/forgot",forgotpassword)
 router.post("/reset",resetpassword)
 
-module.exports = router;
+module.exports = router; 

@@ -1,17 +1,12 @@
-const Users = require("../Models/userModule");
+const Users = require("../Models/userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const transporter = require("../config/mailer");
 
-const {
-  forgotPassword,
-  Sendotp
-} = require("../Template/template");
+const { forgotPassword, Sendotp } = require("../Template/template");
 
 
-// ============================
-// LOGIN
-// ============================
+
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -39,9 +34,7 @@ const login = async (req, res) => {
     }
 
     // Generate OTP
-    const otp = Math.floor(
-      100000 + Math.random() * 900000
-    ).toString();
+    const otp = Math.floor( 100000 + Math.random() * 900000 ).toString();
 
     check.otp = otp;
     await check.save();
