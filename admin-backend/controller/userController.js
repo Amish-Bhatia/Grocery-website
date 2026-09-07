@@ -2,6 +2,7 @@ const Users = require("../Models/userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const transporter = require("../config/mailer");
+const client = require("../middleware/redis");
 
 const { forgotPassword, Sendotp } = require("../Template/template");
 
@@ -103,6 +104,11 @@ const verifyOtp = async (req, res) => {
         expiresIn: "1h"
       }
     );
+
+    const redisKey = `user:${check.id}:token`;
+    await client.set(redisKey, token, {
+      EX: 3600
+    });
 
     return res.status(200).json({
       message: "OTP verified successfully",
