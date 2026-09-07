@@ -1,52 +1,108 @@
-import { useLocation, useNavigate } from "react-router-dom";
-
-const pageTitles = {
-  "/dashboard": { title: "Dashboard", description: "Dashboard Page" },
-  "/dashboard/staff": { title: "Staff", description: "Manage your store staff" },
-  "/dashboard/categories": { title: "Categories", description: "Manage product categories" },
-};
+import { Bell, ChevronDown, LogOut } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Topbar() {
   const navigate = useNavigate();
-  const location = useLocation();
 
-  const page = pageTitles[location.pathname] || pageTitles["/dashboard"];
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef(null);
 
-  const adminName = localStorage.getItem("adminName") || "Amish Bhatia";
+  const adminName =
+    localStorage.getItem("AdminName") ||
+    localStorage.getItem("adminName") ||
+    "Admin";
 
-  const initials = adminName.split(" ").filter(Boolean).map((name) => name[0]).join("").slice(0, 2).toUpperCase();
-
-  const logout = () => {
+  const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("AdminName");
+    localStorage.removeItem("AdminEmail");
     localStorage.removeItem("adminName");
-    navigate("/", { replace: true });
+    localStorage.removeItem("adminEmail");
+
+    navigate("/");
   };
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <header className="sticky top-0 z-30 h-20 border-b border-slate-200 bg-white/95 backdrop-blur">
+    <header className="sticky top-0 z-30 h-16 bg-linear-to-r from-[#019D3E] to-[#00491B] shadow-sm">
+      <div className="flex h-full items-center justify-end px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center gap-4">
 
-      <div className="flex h-full items-center justify-between px-4 sm:px-6 lg:px-8">
+          {/* Notifications */}
+          <button
+            type="button"
+            className="relative flex h-9 w-9 items-center justify-center rounded-full text-white transition hover:bg-white/10"
+            aria-label="Notifications"
+          >
+            <Bell size={20} />
 
-        <div className="ml-12 lg:ml-0">
-          <h1 className="text-lg font-semibold text-slate-900 sm:text-xl">{page.title}</h1>
-          <p className="hidden text-sm text-slate-500 sm:block">{page.description}</p>
-        </div>
+            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-500" />
+          </button>
 
-        <div className="flex items-center gap-3">
+          {/* Admin Section */}
+          <div className="flex items-center gap-3">
 
-          <div className="hidden text-right sm:block">
-            <p className="text-sm font-semibold text-slate-800">{adminName}</p>
-            <p className="text-xs text-slate-500">Administrator</p>
+            {/* Avatar */}
+            <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-white/20 text-sm font-semibold text-white">
+              {adminName.charAt(0).toUpperCase()}
+            </div>
+
+            {/* Admin Name */}
+            <div className="hidden leading-tight sm:block">
+              <p className="text-sm font-semibold text-white">
+                {adminName}
+              </p>
+
+              <p className="text-[11px] text-white/70">
+                Admin
+              </p>
+            </div>
+
+            <div className="relative" ref={menuRef}>
+              <button
+                type="button"
+                onClick={() => setIsMenuOpen((prev) => !prev)}
+                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-white transition hover:bg-white/10"
+                aria-label="Open admin menu"
+                aria-expanded={isMenuOpen}>
+                <ChevronDown
+                  size={17}
+                  className={`transition-transform duration-200 ${
+                    isMenuOpen ? "rotate-180" : ""}`}/>
+              </button>
+
+              {isMenuOpen && (
+                <div className="absolute right-0 top-full mt-2 w-40 rounded-lg bg-[#00491B] p-1 shadow-lg">
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-white transition hover:bg-white/10"
+                    title="Logout"
+                  >
+                    <LogOut size={17} />
+                    <span>Logout</span>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
-
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-700">{initials || "A"}</div>
-
-          <button type="button" onClick={logout} className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600">Logout</button>
-
         </div>
-
       </div>
-
     </header>
   );
 }

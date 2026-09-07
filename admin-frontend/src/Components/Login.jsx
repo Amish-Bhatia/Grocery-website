@@ -60,6 +60,9 @@ export default function Login() {
         password,
       });
 
+      localStorage.setItem("AdminName", data.user.name);
+      localStorage.setItem("AdminEmail", data.user.email);
+
       alert(data.message || "OTP sent to your email.");
 
       setShowOtp(true);

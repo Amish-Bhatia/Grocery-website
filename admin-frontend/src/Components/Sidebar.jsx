@@ -1,61 +1,113 @@
-import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import {
+  ChevronLeft,
+  ChevronRight,
+  LayoutDashboard,
+  Package,
+  ShoppingCart,
+  Users,
+  Tags,
+  UserCog,
+  Settings,
+  
+} from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 const navItems = [
-  { label: "Dashboard", path: "/dashboard", icon: "▦" },
-  { label: "Products", path: "/products", icon: "□" },
-  { label: "Orders", path: "/orders", icon: "☷" },
-  { label: "Customers", path: "/customers", icon: "♙" },
-  { label: "Categories", path: "/dashboard/categories", icon: "☰" },
-  { label: "Staff", path: "/dashboard/staff", icon: "♧" },
-  { label: "Settings", path: "/settings", icon: "⚙" },
+  { label: "Dashboard",  path: "/dashboard",  icon: LayoutDashboard },
+  { label: "Products",  path: "/products",   icon: Package,},
+  {
+    label: "Orders",    path: "/orders",
+    icon: ShoppingCart,
+  },
+  {
+    label: "Customers",
+    path: "/customers",
+    icon: Users,
+  },
+  {
+    label: "Categories",
+    path: "/dashboard/categories",
+    icon: Tags,
+  },
+  {
+    label: "Staff",
+    path: "/dashboard/staff",
+    icon: UserCog,
+  },
+  {
+    label: "Settings",
+    path: "/settings",
+    icon: Settings,
+  },
 ];
 
-export default function Sidebar() {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const handleNavigate = (path) => {
-    navigate(path);
-    setMobileOpen(false);
-  };
-
+export default function Sidebar({ collapsed, setCollapsed }) {
   return (
-    <>
-      {mobileOpen && <button type="button" aria-label="Close menu" onClick={() => setMobileOpen(false)} className="fixed inset-0 z-40 bg-black/30 lg:hidden" />}
-
-      <button type="button" onClick={() => setMobileOpen(true)} className="fixed left-4 top-4 z-50 rounded-lg border border-slate-200 bg-white p-2 text-slate-700 shadow-sm lg:hidden">☰</button>
-
-      <aside className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-slate-200 bg-white transition-transform duration-200 lg:translate-x-0 ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
-
-        <div className="flex h-20 items-center border-b border-slate-200 px-6">
-          <img src="/Logo.svg" alt="Grocery Admin" className="max-h-12 max-w-full object-contain" />
+    <aside
+      className={`fixed left-0 top-0 z-40 hidden h-screen border-r border-slate-200 bg-white transition-all duration-300 lg:block ${
+        collapsed ? "w-20" : "w-64"
+      }`}
+    >
+      <div className="relative flex h-16 items-center border-b border-slate-100 px-5">
+        <div >
+          { !collapsed ? (
+            <img src="/Logo.svg" alt="" className="h-8 w-auto" />
+          ) : (
+            <img src="/plant.svg" alt="" className="h-8 w-auto" />
+          )}
         </div>
+                                                    
 
-        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-5" aria-label="Main navigation">
+        <button
+          type="button"
+          onClick={() => setCollapsed(!collapsed)}
+          className="absolute -right-3 top-4 flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 hover:text-emerald-700"
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {collapsed ? (
+            <ChevronRight size={15} />
+          ) : (
+            <ChevronLeft size={15} />
+          )}
+        </button>
+      </div>
 
-          {navItems.map((item) => {
-            const active = location.pathname === item.path;
+      <nav className="space-y-1.5 px-3 py-5">
+        {navItems.map((item) => {
+          const Icon = item.icon;
 
-            return (
-              <button key={item.label} type="button" onClick={() => handleNavigate(item.path)} className={`flex w-full items-center gap-3 rounded-lg px-4 py-3 text-left text-sm font-medium transition ${active ? "bg-emerald-50 text-emerald-700" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}>
-                <span className="flex h-5 w-5 items-center justify-center text-lg">{item.icon}</span>
-                <span>{item.label}</span>
-              </button>
-            );
-          })}
+          return (
+            <NavLink
+              key={item.label}
+              to={item.path}
+              className={({ isActive }) =>
+                `group flex h-11 items-center rounded-lg text-sm font-medium transition ${
+                  collapsed
+                    ? "justify-center px-0"
+                    : "gap-3 px-3"
+                } ${
+                  isActive
+                    ? "bg-[#019D3E] text-white shadow-sm"
+                    : "text-slate-500 hover:bg-[#019D3E]   hover:text-white"
+                }`
+              }
+              title={collapsed ? item.label : undefined}
+            >
+              <Icon
+                size={19}
+                strokeWidth={2}
+                className="shrink-0"
+              />
 
-        </nav>
-
-        <div className="border-t border-slate-200 p-4">
-          <div className="rounded-xl bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Admin Panel</p>
-            <p className="mt-1 text-sm font-medium text-slate-700">Grocery Store</p>
-          </div>
-        </div>
-
-      </aside>
-    </>
+              {!collapsed && (
+                <span className="truncate">
+                  {item.label}
+                </span>
+              )}
+            </NavLink>
+          );
+        })}
+      </nav>
+    </aside>
   );
 }
