@@ -13,7 +13,7 @@ const login = async (req, res) => {
 
     const check = await Users.findOne({
       email,
-      role: "admin"
+      // role: "admin"
     });
 
     if (!check) {
@@ -48,7 +48,11 @@ const login = async (req, res) => {
     });
 
     return res.status(200).json({
-      message: "OTP sent to your email"
+      message: "OTP sent to your email",
+        user: {
+    name: check.name,
+    email: check.email
+  }
     });
 
   } catch (e) {
@@ -102,7 +106,13 @@ const verifyOtp = async (req, res) => {
 
     return res.status(200).json({
       message: "OTP verified successfully",
-      token
+      token,
+      user: {
+    id: check._id,
+    name: check.name,
+    email: check.email,
+    role: check.role
+  }
     });
 
   } catch (e) {
