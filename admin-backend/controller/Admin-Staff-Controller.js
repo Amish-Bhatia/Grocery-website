@@ -3,7 +3,7 @@ const staff = require("../Models/Admin-Staff-Model");
 
 const addStaff = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, phone, password, permissions } = req.body;
 
         const existingStaff = await staff.findOne({ email });
 
@@ -13,14 +13,16 @@ const addStaff = async (req, res) => {
             });
         }
 
-        if (!name || !email || !password) {
-            return res.status(400).json({ message: "Name, email and password are required" });
+        if (!name || !email || !phone || !password) {
+            return res.status(400).json({ message: "Name, email, phone and password are required" });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const newStaff = new staff({
             name,
             email,
+            phone,
+            permissions,
             password: hashedPassword
         });
 
@@ -63,14 +65,14 @@ const getSingleStaff = async (req,res)=>{
 const updateStaff = async (req,res)=>{
     try{
         const { id } = req.params;
-        const { name, email, password, status } = req.body;
+        const { name, email, phone, password, status, permissions } = req.body;
 
         const existingStaff = await staff.findOne({email});
         if(existingStaff && existingStaff._id.toString() !== id){
             return res.status(400).json({message:"Email already exists"});
         }
 
-        const updateData = { name, email, status };
+        const updateData = { name, email, phone, status, permissions };
         if (password) updateData.password = await bcrypt.hash(password, 10);
 
         const updatedStaff = await staff.findByIdAndUpdate(

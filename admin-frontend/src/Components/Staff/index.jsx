@@ -67,6 +67,7 @@ export default function Staff() {
       const data = await apimethods.getApi(`/get-staff/${id}`);
 
       setSelectedStaff(
+        data.staffMember ||
         data.staff ||
         data.staffs ||
         data
@@ -500,7 +501,6 @@ export default function Staff() {
                     <p className="mt-1 text-sm font-medium text-slate-800">
                       {selectedStaff.name || "—"}
                     </p>
-
                   </div>
 
 

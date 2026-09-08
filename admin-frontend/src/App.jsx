@@ -14,6 +14,8 @@ import StaffAddEdit from "./Components/Staff/AddEdit";
 
 import Category from "./Components/Category";
 
+import Products from "./Components/Products";
+
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
@@ -49,14 +51,11 @@ export default function App() {
         >
 
           <Route index element={<Dashboard />} />
-
           <Route path="staff" element={<Staff />} />
-
           <Route path="staff/add" element={<StaffAddEdit />} />
-
           <Route path="staff/edit/:id" element={<StaffAddEdit />} />
-
           <Route path="categories" element={<Category />} />
+          <Route path="products" element={<Products />} />
 
         </Route>
 
@@ -72,7 +71,7 @@ export default function App() {
 
         <Route
           path="/products"
-          element={<Navigate to="/dashboard" replace />}
+          element={<Navigate to="/dashboard/products" replace />}
         />
 
         <Route
@@ -89,14 +88,12 @@ export default function App() {
           path="/settings"
           element={<Navigate to="/dashboard" replace />}
         />
-
+        
         <Route
           path="*"
           element={<Navigate to="/" replace />}
         />
-
       </Routes>
-
     </BrowserRouter>
   );
 }

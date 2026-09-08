@@ -8,15 +8,25 @@ import {
   Tags,
   UserCog,
   Settings,
-  
 } from "lucide-react";
+
 import { NavLink } from "react-router-dom";
 
+
 const navItems = [
-  { label: "Dashboard",  path: "/dashboard",  icon: LayoutDashboard },
-  { label: "Products",  path: "/products",   icon: Package,},
   {
-    label: "Orders",    path: "/orders",
+    label: "Dashboard",
+    path: "/dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    label: "Products",
+    path: "/products",
+    icon: Package,
+  },
+  {
+    label: "Orders",
+    path: "/orders",
     icon: ShoppingCart,
   },
   {
@@ -41,6 +51,7 @@ const navItems = [
   },
 ];
 
+
 export default function Sidebar({ collapsed, setCollapsed }) {
   return (
     <aside
@@ -48,15 +59,27 @@ export default function Sidebar({ collapsed, setCollapsed }) {
         collapsed ? "w-20" : "w-64"
       }`}
     >
+
       <div className="relative flex h-16 items-center border-b border-slate-100 px-5">
-        <div >
-          { !collapsed ? (
-            <img src="/Logo.svg" alt="" className="h-8 w-auto" />
+
+        <div>
+
+          {!collapsed ? (
+            <img
+              src="/Logo.svg"
+              alt="Grocery Admin"
+              className="h-8 w-auto"
+            />
           ) : (
-            <img src="/plant.svg" alt="" className="h-8 w-auto" />
+            <img
+              src="/plant.svg"
+              alt="Grocery Admin"
+              className="h-8 w-auto"
+            />
           )}
+
         </div>
-                                                    
+
 
         <button
           type="button"
@@ -64,16 +87,22 @@ export default function Sidebar({ collapsed, setCollapsed }) {
           className="absolute -right-3 top-4 flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 hover:text-emerald-700"
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
+
           {collapsed ? (
             <ChevronRight size={15} />
           ) : (
             <ChevronLeft size={15} />
           )}
+
         </button>
+
       </div>
 
+
       <nav className="space-y-1.5 px-3 py-5">
+
         {navItems.map((item) => {
+
           const Icon = item.icon;
 
           return (
@@ -87,27 +116,32 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                     : "gap-3 px-3"
                 } ${
                   isActive
-                    ? "bg-[#019D3E] text-white shadow-sm"
-                    : "text-slate-500 hover:bg-[#019D3E]   hover:text-white"
+                    ? "bg-linear-to-r from-[#019D3E] to-[#00491B] text-white shadow-sm"
+                    : "text-slate-500 hover:bg-linear-to-r hover:from-[#019D3E] hover:to-[#00491B] hover:text-white"
                 }`
               }
               title={collapsed ? item.label : undefined}
             >
+
               <Icon
                 size={19}
                 strokeWidth={2}
                 className="shrink-0"
               />
 
+
               {!collapsed && (
                 <span className="truncate">
                   {item.label}
                 </span>
               )}
+
             </NavLink>
           );
+
         })}
+
       </nav>
     </aside>
   );
-}
+}      

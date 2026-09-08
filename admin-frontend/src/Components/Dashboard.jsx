@@ -12,25 +12,25 @@ import { useNavigate } from "react-router-dom";
 const stats = [
   {
     label: "Total Products",
-    value: "—",
+    value: "_",
     description: "Products in your store",
     icon: Package,
   },
   {
     label: "Total Orders",
-    value: "—",
+    value: "_",
     description: "Orders received",
     icon: ShoppingCart,
   },
   {
     label: "Customers",
-    value: "—",
+    value: "_",
     description: "Registered customers",
     icon: Users,
   },
   {
     label: "Staff Members",
-    value: "—",
+    value: "_",
     description: "Admin staff",
     icon: UserCog,
   },
@@ -45,7 +45,7 @@ export default function Dashboard() {
       <section>
 
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-          Welcome back 👋
+          Welcome back 
         </h1>
 
         <p className="mt-1 text-sm text-slate-500">
@@ -236,32 +236,6 @@ export default function Dashboard() {
 
           </div>
 
-
-          <div className="mt-4 rounded-xl border border-slate-100 bg-slate-50 p-4">
-
-            <p className="text-xs font-medium text-slate-500">
-              Available modules
-            </p>
-
-            <div className="mt-3 flex flex-wrap gap-2">
-
-              <span className="rounded-full bg-white px-3 py-1.5 text-xs font-medium text-slate-600 shadow-sm">
-                Staff
-              </span>
-
-              <span className="rounded-full bg-white px-3 py-1.5 text-xs font-medium text-slate-600 shadow-sm">
-                Categories
-              </span>
-
-              <span className="rounded-full bg-slate-200 px-3 py-1.5 text-xs font-medium text-slate-400">
-                Products
-              </span>
-
-              <span className="rounded-full bg-slate-200 px-3 py-1.5 text-xs font-medium text-slate-400">
-                Orders
-              </span>
-            </div>
-          </div>
         </div>
       </section>
     </div>
