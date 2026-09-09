@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import Swal from "sweetalert2";
 
-import { ArrowLeft, UserPlus } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, UserPlus } from "lucide-react";
 
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -55,6 +55,8 @@ export default function AddEdit() {
   const [formData, setFormData] = useState(emptyForm);
 
   const [loading, setLoading] = useState(false);
+
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (!isEditing) {
@@ -338,17 +340,20 @@ export default function AddEdit() {
                 Password
               </label>
 
-              <input
-                id="staff-password"
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder={isEditing ? "Leave blank to keep current password" : "Enter password"}
-                required={!isEditing}
-                minLength={isEditing && !formData.password ? undefined : 6}
-                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-              />
+              <div className="relative">
+                <input
+                  id="staff-password"
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder={isEditing ? "Leave blank to keep current password" : "Enter password"}
+                  required={!isEditing}
+                  minLength={isEditing && !formData.password ? undefined : 6}
+                  className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 pr-12 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                />
+                <button type="button" onClick={() => setShowPassword((previous) => !previous)} aria-label={showPassword ? "Hide password" : "Show password"} title={showPassword ? "Hide password" : "Show password"} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-emerald-700">{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button>
+              </div>
 
               <p className="mt-2 text-xs text-slate-400">
                 {isEditing

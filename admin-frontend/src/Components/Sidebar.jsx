@@ -8,9 +8,12 @@ import {
   Tags,
   UserCog,
   Settings,
+  FileText,
+  HelpCircle,
 } from "lucide-react";
 
 import { NavLink } from "react-router-dom";
+import { useState } from "react";
 
 
 const navItems = [
@@ -21,7 +24,7 @@ const navItems = [
   },
   {
     label: "Products",
-    path: "/products",
+    path: "/dashboard/products",
     icon: Package,
   },
   {
@@ -49,10 +52,27 @@ const navItems = [
     path: "/settings",
     icon: Settings,
   },
+  {
+    label: "FAQs",
+    path: "/dashboard/faqs",
+    icon: HelpCircle,
+  },
+  {
+    label: "Terms & Conditions",
+    path: "/dashboard/terms-conditions",
+    icon: FileText,
+  },
+  {
+    label: "Privacy Policy",
+    path: "/dashboard/privacy-policy",
+    icon: FileText,
+  },
 ];
 
 
 export default function Sidebar({ collapsed, setCollapsed }) {
+  const [activeItem, setActiveItem] = useState("Dashboard");
+
   return (
     <aside
       className={`fixed left-0 top-0 z-40 hidden h-screen border-r border-slate-200 bg-white transition-all duration-300 lg:block ${
@@ -109,13 +129,14 @@ export default function Sidebar({ collapsed, setCollapsed }) {
             <NavLink
               key={item.label}
               to={item.path}
-              className={({ isActive }) =>
+              onClick={() => setActiveItem(item.label)}
+              className={() =>
                 `group flex h-11 items-center rounded-lg text-sm font-medium transition ${
                   collapsed
                     ? "justify-center px-0"
                     : "gap-3 px-3"
                 } ${
-                  isActive
+                  activeItem === item.label
                     ? "bg-linear-to-r from-[#019D3E] to-[#00491B] text-white shadow-sm"
                     : "text-slate-500 hover:bg-linear-to-r hover:from-[#019D3E] hover:to-[#00491B] hover:text-white"
                 }`

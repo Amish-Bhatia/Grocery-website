@@ -15,6 +15,9 @@ import StaffAddEdit from "./Components/Staff/AddEdit";
 import Category from "./Components/Category";
 
 import Products from "./Components/Products";
+import TermsConditions from "./Components/TermsConditions";
+import PrivacyPolicy from "./Components/PrivacyPolicy";
+import FAQs from "./Components/FAQs";
 
 
 const ProtectedRoute = ({ children }) => {
@@ -56,6 +59,9 @@ export default function App() {
           <Route path="staff/edit/:id" element={<StaffAddEdit />} />
           <Route path="categories" element={<Category />} />
           <Route path="products" element={<Products />} />
+          <Route path="terms-conditions" element={<TermsConditions />} />
+          <Route path="privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="faqs" element={<FAQs />} />
 
         </Route>
 
@@ -88,6 +94,10 @@ export default function App() {
           path="/settings"
           element={<Navigate to="/dashboard" replace />}
         />
+
+        <Route path="/terms-conditions" element={<Navigate to="/dashboard/terms-conditions" replace />} />
+        <Route path="/privacy-policy" element={<Navigate to="/dashboard/privacy-policy" replace />} />
+        <Route path="/faqs" element={<Navigate to="/dashboard/faqs" replace />} />
         
         <Route
           path="*"

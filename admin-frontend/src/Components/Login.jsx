@@ -1,5 +1,8 @@
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import OtpInput from "react-otp-input";
+import Swal from "sweetalert2";
 import ForgotPassword from "./ForgotPassword";
 import apimethods from "../Methods/ApiClient";
 
@@ -20,12 +23,6 @@ export default function Login() {
 
   const [showOtp, setShowOtp] = useState(false);
 
-  const [emailError, setEmailError] = useState("");
-
-  const [passwordError, setPasswordError] = useState("");
-
-  const [otpError, setOtpError] = useState("");
-
   const [loading, setLoading] = useState(false);
 
   const [showForgotPassword, setShowForgotPassword] = useState(false);
@@ -35,16 +32,13 @@ export default function Login() {
 
     let valid = true;
 
-    setEmailError("");
-    setPasswordError("");
-
     if (!emailRegex.test(email)) {
-      setEmailError("Please enter a valid email address.");
+      showError("Please enter a valid email address.");
       valid = false;
     }
 
     if (!passwordRegex.test(password)) {
-      setPasswordError("Password must be 8+ characters with uppercase, lowercase, number, and special character.");
+      showError("Password must be 8+ characters with uppercase, lowercase, number, and special character.");
       valid = false;
     }
 
@@ -63,13 +57,18 @@ export default function Login() {
       localStorage.setItem("AdminName", data.user.name);
       localStorage.setItem("AdminEmail", data.user.email);
 
-      alert(data.message || "OTP sent to your email.");
+      await Swal.fire({
+        title: "OTP Sent",
+        text: data.message || "OTP sent to your email.",
+        icon: "success",
+        confirmButtonColor: "#019D3E",
+      });
 
       setShowOtp(true);
     } catch (error) {
       console.error("Login error:", error);
 
-      setPasswordError(error.message || "Unable to login.");
+      showError(error.message || "Unable to login.");
     } finally {
       setLoading(false);
     }
@@ -78,10 +77,8 @@ export default function Login() {
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
 
-    setOtpError("");
-
     if (!otp || otp.length !== 6) {
-      setOtpError("Please enter the 6-digit OTP.");
+      showError("Please enter the 6-digit OTP.");
       return;
     }
 
@@ -105,10 +102,19 @@ export default function Login() {
     } catch (error) {
       console.error("OTP verification error:", error);
 
-      setOtpError(error.message || "Invalid OTP.");
+      showError(error.message || "Invalid OTP.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const showError = (message) => {
+    Swal.fire({
+      title: "Login Error",
+      text: message,
+      icon: "error",
+      confirmButtonColor: "#dc2626",
+    });
   };
 
   if (showForgotPassword) {
@@ -142,8 +148,6 @@ export default function Login() {
 
               <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} disabled={showOtp} placeholder="Enter your email" className="h-12 w-full rounded-lg border border-emerald-300 bg-emerald-50/50 px-4 text-sm text-slate-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:opacity-60" />
 
-              {emailError && <p className="mt-1.5 text-xs text-red-600">{emailError}</p>}
-
             </div>
 
             <div className="mb-2">
@@ -154,11 +158,9 @@ export default function Login() {
 
                 <input id="password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} disabled={showOtp} placeholder="Enter your password" className="h-12 w-full rounded-lg border border-emerald-300 bg-emerald-50/50 px-4 pr-12 text-sm text-slate-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:opacity-60" />
 
-                <button type="button" onClick={() => setShowPassword((previous) => !previous)} disabled={showOtp} className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-slate-500 hover:text-emerald-700">{showPassword ? "Hide" : "Show"}</button>
+                <button type="button" onClick={() => setShowPassword((previous) => !previous)} disabled={showOtp} aria-label={showPassword ? "Hide password" : "Show password"} title={showPassword ? "Hide password" : "Show password"} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-emerald-700 disabled:cursor-not-allowed disabled:opacity-60">{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button>
 
               </div>
-
-              {passwordError && <p className="mt-1.5 text-xs leading-4 text-red-600">{passwordError}</p>}
 
             </div>
 
@@ -166,10 +168,24 @@ export default function Login() {
               <div className="mb-5 mt-5">
 
                 <label htmlFor="otp" className="mb-2 block text-sm font-medium text-slate-700">Enter OTP</label>
+                <OtpInput
+                  value={otp}
+                  onChange={(value) => setOtp(value.replace(/\D/g, ""))}
+                  numInputs={6}
+                  shouldAutoFocus
+                  inputType="tel"
+                  renderSeparator={<span className="w-2" />}
+                  renderInput={(inputProps, index) => (
+                    <input
+                      {...inputProps}
+                      aria-label={`OTP digit ${index + 1}`}
+                      className="!h-12 !w-12 flex-none rounded-lg border border-emerald-300 bg-emerald-50/50 text-center text-lg font-semibold text-slate-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
+                    />
+                  )}
+                  containerStyle="flex"
+                  inputStyle=""
+                />
 
-                <input id="otp" type="text" inputMode="numeric" maxLength="6" value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))} placeholder="Enter 6-digit OTP" className="h-12 w-full rounded-lg border border-emerald-300 bg-emerald-50/50 px-4 text-center text-sm tracking-[6px] outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100" />
-
-                {otpError && <p className="mt-1.5 text-xs text-red-600">{otpError}</p>}
 
               </div>
             )}

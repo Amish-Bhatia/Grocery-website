@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import apimethods from "../Methods/ApiClient";
 
@@ -110,7 +111,7 @@ export default function ResetPassword() {
 
                 <input id="new-password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Create new password" className="h-12 w-full rounded-lg border border-emerald-300 bg-emerald-50/50 px-4 pr-16 text-sm text-slate-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100" />
 
-                <button type="button" onClick={() => setShowPassword((previous) => !previous)} className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-slate-500 hover:text-emerald-700">{showPassword ? "Hide" : "Show"}</button>
+                <button type="button" onClick={() => setShowPassword((previous) => !previous)} aria-label={showPassword ? "Hide password" : "Show password"} title={showPassword ? "Hide password" : "Show password"} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-emerald-700">{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button>
 
               </div>
 
@@ -126,7 +127,7 @@ export default function ResetPassword() {
 
                 <input id="confirm-password" type={showConfirmPassword ? "text" : "password"} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm new password" className="h-12 w-full rounded-lg border border-emerald-300 bg-emerald-50/50 px-4 pr-16 text-sm text-slate-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100" />
 
-                <button type="button" onClick={() => setShowConfirmPassword((previous) => !previous)} className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-slate-500 hover:text-emerald-700">{showConfirmPassword ? "Hide" : "Show"}</button>
+                <button type="button" onClick={() => setShowConfirmPassword((previous) => !previous)} aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"} title={showConfirmPassword ? "Hide confirm password" : "Show confirm password"} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-emerald-700">{showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button>
 
               </div>
 
