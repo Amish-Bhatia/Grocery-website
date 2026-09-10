@@ -1,9 +1,10 @@
 const staffRoutes=  require('../controller/Admin-Staff-Controller');
 const express = require('express');
-const { middleware } = require("../middleware/auth");
+const { middleware, authorize } = require("../middleware/auth");
 const router = express.Router();
 
 router.use(middleware);
+router.use(authorize("staff", "manage"));
 
 router.post("/add-staff", staffRoutes.addStaff);
 router.get("/get-staff", staffRoutes.getAllStaff);

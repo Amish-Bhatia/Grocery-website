@@ -8,6 +8,7 @@ const path = require("path");
 const app = express();
 const categoryRoutes = require("./routes/Admin-Category-Routes");
 const staffRoutes = require("./routes/Admin-Staff-Route");
+const contentRoutes = require("./routes/Content-Routes");
 const protectedRoutes = require("./routes/protectedRoute");
 const router = require("./routes/userRoutes");
 
@@ -18,6 +19,7 @@ app.use( "/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/", router); 
 app.use("/", categoryRoutes);
 app.use("/", staffRoutes);
+app.use("/", contentRoutes);
 app.use("/protected", protectedRoutes);
 
 app.get("/health", (req, res) => res.json({ ok: true }));

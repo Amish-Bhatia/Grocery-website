@@ -12,8 +12,7 @@ const login = async (req, res) => {
     const { email, password } = req.body;
 
     const check = await Users.findOne({
-      email,
-      // role: "admin"
+      email
     });
 
     if (!check) {
@@ -71,8 +70,7 @@ const verifyOtp = async (req, res) => {
     const { email, otp } = req.body;
 
     const check = await Users.findOne({
-      email,
-      role: "admin"
+      email
     });
 
     if (!check) {
@@ -137,8 +135,7 @@ const forgotpassword = async (req, res) => {
     }
 
     const user = await Users.findOne({
-      email,
-      role: "admin"
+      email
     });
 
     if (!user) {
@@ -212,8 +209,7 @@ const resetpassword = async (req, res) => {
 
     const user = await Users.findOne({
       _id: decoded.userId,
-      email: decoded.email,
-      role: "admin"
+      email: decoded.email
     });
 
     if (!user) {

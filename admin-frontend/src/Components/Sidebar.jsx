@@ -58,13 +58,8 @@ const navItems = [
     icon: HelpCircle,
   },
   {
-    label: "Terms & Conditions",
-    path: "/dashboard/terms-conditions",
-    icon: FileText,
-  },
-  {
-    label: "Privacy Policy",
-    path: "/dashboard/privacy-policy",
+    label: "Content",
+    path: "/dashboard/content",
     icon: FileText,
   },
 ];

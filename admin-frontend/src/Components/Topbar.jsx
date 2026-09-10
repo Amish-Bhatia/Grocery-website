@@ -2,6 +2,21 @@ import { Bell, ChevronDown, LogOut } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+const getTokenRole = () => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    return null;
+  }
+
+  try {
+    const payload = token.split(".")[1];
+    return JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/"))).role;
+  } catch {
+    return null;
+  }
+};
+
 export default function Topbar() {
   const navigate = useNavigate();
 
@@ -11,7 +26,8 @@ export default function Topbar() {
   const adminName =
     localStorage.getItem("AdminName") ||
     localStorage.getItem("adminName") ||
-    "Admin";
+    "User";
+  const userRole = getTokenRole() || localStorage.getItem("userRole") || "User";
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -19,6 +35,8 @@ export default function Topbar() {
     localStorage.removeItem("AdminEmail");
     localStorage.removeItem("adminName");
     localStorage.removeItem("adminEmail");
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("userEmail");
 
     navigate("/");
   };
@@ -69,7 +87,7 @@ export default function Topbar() {
               </p>
 
               <p className="text-[11px] text-white/70">
-                Admin
+                {userRole.charAt(0).toUpperCase() + userRole.slice(1)}
               </p>
             </div>
 

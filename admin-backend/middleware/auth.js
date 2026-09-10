@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
+const Users = require("../Models/userModel");
 
 
-const middleware = (req, res, next) => {
+const middleware = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
@@ -22,7 +23,23 @@ const middleware = (req, res, next) => {
       process.env.JWT_SECRET
     );
 
-    req.user = verifyToken;
+    const user = await Users.findById(verifyToken.userId)
+      .select("-password -otp")
+      .lean();
+
+    if (!user) {
+      return res.status(401).json({
+        message: "User not found"
+      });
+    }
+
+    if (user.status === "inactive") {
+      return res.status(403).json({
+        message: "User account is inactive"
+      });
+    }
+
+    req.user = user;
 
     next();
 
@@ -33,5 +50,18 @@ const middleware = (req, res, next) => {
   }
 };
 
+const authorize = (resource, action) => (req, res, next) => {
+  if (req.user?.role === "admin") {
+    return next();
+  }
 
-module.exports = { middleware};
+  if (req.user?.role === "staff" && req.user.permissions?.[resource]?.[action]) {
+    return next();
+  }
+
+  return res.status(403).json({
+    message: "You do not have permission to perform this action"
+  });
+};
+
+module.exports = { middleware, authorize };

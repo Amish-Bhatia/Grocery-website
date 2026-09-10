@@ -21,10 +21,41 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true
   },
+  phone: {
+    type: String
+  },
+  permissions: {
+    products: {
+      read: { type: Boolean, default: false },
+      edit: { type: Boolean, default: false },
+      delete: { type: Boolean, default: false }
+    },
+    categories: {
+      read: { type: Boolean, default: false },
+      create: { type: Boolean, default: false },
+      edit: { type: Boolean, default: false },
+      delete: { type: Boolean, default: false }
+    },
+    orders: {
+      read: { type: Boolean, default: false },
+      edit: { type: Boolean, default: false },
+      delete: { type: Boolean, default: false }
+    },
+    customers: {
+      read: { type: Boolean, default: false },
+      edit: { type: Boolean, default: false },
+      delete: { type: Boolean, default: false }
+    }
+  },
+  status: {
+    type: String,
+    enum: ["active", "inactive"],
+    default: "active"
+  },
   role: {
     type: String,
-    enum: ["admin"],
-    default: "admin"
+    enum: ["admin", "staff", "customer"],
+    default: "customer"
   },
   otp: {
     type: String

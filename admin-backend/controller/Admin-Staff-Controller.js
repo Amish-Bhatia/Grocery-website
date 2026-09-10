@@ -1,15 +1,15 @@
 const bcrypt = require("bcryptjs");
-const staff = require("../Models/Admin-Staff-Model");
+const Users = require("../Models/userModel");
 
 const addStaff = async (req, res) => {
     try {
         const { name, email, phone, password, permissions } = req.body;
 
-        const existingStaff = await staff.findOne({ email });
+        const existingStaff = await Users.findOne({ email });
 
         if (existingStaff) {
             return res.status(400).json({
-                message: "Staff already exists"
+            message: "Staff already exists"
             });
         }
 
@@ -18,12 +18,13 @@ const addStaff = async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newStaff = new staff({
+        const newStaff = new Users({
             name,
             email,
             phone,
             permissions,
-            password: hashedPassword
+            password: hashedPassword,
+            role: "staff"
         });
 
         await newStaff.save();
@@ -41,7 +42,7 @@ const addStaff = async (req, res) => {
 
 const getAllStaff = async (req,res)=>{
     try{
-        const staffs = await staff.find();
+        const staffs = await Users.find({ role: "staff" });
         return res.status(200).json({staffs});
     }
     catch(e){
@@ -51,7 +52,7 @@ const getAllStaff = async (req,res)=>{
 
 const getSingleStaff = async (req,res)=>{
     try{
-        const staffMember = await staff.findById(req.params.id);
+        const staffMember = await Users.findOne({ _id: req.params.id, role: "staff" });
         if(!staffMember){
             return res.status(404).json({message:"Staff not found"});
         }           
@@ -67,16 +68,16 @@ const updateStaff = async (req,res)=>{
         const { id } = req.params;
         const { name, email, phone, password, status, permissions } = req.body;
 
-        const existingStaff = await staff.findOne({email});
-        if(existingStaff && existingStaff._id.toString() !== id){
+        const existingUser = await Users.findOne({ email });
+        if(existingUser && existingUser._id.toString() !== id){
             return res.status(400).json({message:"Email already exists"});
         }
 
         const updateData = { name, email, phone, status, permissions };
         if (password) updateData.password = await bcrypt.hash(password, 10);
 
-        const updatedStaff = await staff.findByIdAndUpdate(
-            id,
+        const updatedStaff = await Users.findOneAndUpdate(
+            { _id: id, role: "staff" },
             updateData,
             { new: true }
         );
@@ -96,7 +97,7 @@ const deleteStaff = async (req,res)=>{
     try{
         const { id } = req.params;
 
-        const deletedStaff = await staff.findByIdAndDelete(id);
+        const deletedStaff = await Users.findOneAndDelete({ _id: id, role: "staff" });
         if(!deletedStaff){
             return res.status(404).json({message:"Staff not found"});
         }

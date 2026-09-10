@@ -91,6 +91,8 @@ export default function Login() {
       });
 
       localStorage.setItem("token", data.token);
+      localStorage.setItem("userRole", data.user?.role || "unknown");
+      localStorage.setItem("userEmail", data.user?.email || email);
 
       if (data.user?.name) {
         localStorage.setItem("adminName", data.user.name);
