@@ -1,19 +1,12 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import LoginForm from "./Components/Login";
-
 import ResetPassword from "./Components/ResetPassword";
-
 import DashboardLayout from "./Components/Layout/DashboardLayout";
-
 import Dashboard from "./Components/Dashboard";
-
 import Staff from "./Components/Staff";
-
 import StaffAddEdit from "./Components/Staff/AddEdit";
-
 import Category from "./Components/Category";
-
 import Products from "./Components/Products";
 import Content from "./Components/Content";
 import FAQs from "./Components/FAQs";
