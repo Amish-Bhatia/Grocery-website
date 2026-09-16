@@ -1,5 +1,5 @@
 {
-  "name": "dna",
+  "name": "grocery-admin",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -15,7 +15,7 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
-    "lucide-react": "^1.40.0",
+    "lucide-react": "^1.45.0",
     "mongoose": "^9.9.4",
     "nodemailer": "^9.0.5",
     "react": "^19.2.8",

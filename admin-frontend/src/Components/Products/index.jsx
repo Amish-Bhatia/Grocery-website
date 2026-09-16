@@ -28,11 +28,21 @@ export default function Products() {
   const [editing, setEditing] = useState(null);
   const [viewing, setViewing] = useState(null);
 
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
-  }, [products]);
+  const loadProducts = async () => {
+    try {
+      const data = await apimethods.getApi("/get-products");
+      if (data && Array.isArray(data.products) && data.products.length > 0) {
+        const formatted = data.products.map(p => ({ ...p, id: p._id || p.id }));
+        setProducts(formatted);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(formatted));
+      }
+    } catch {
+      // Fallback to localStorage products
+    }
+  };
 
   useEffect(() => {
+    loadProducts();
     apimethods.getApi("/get-category")
       .then((data) => setCategories(data.categories || []))
       .catch(() => setCategories([]));
@@ -43,11 +53,22 @@ export default function Products() {
     [products, search, category, stock]
   );
 
-  const saveProduct = (data) => {
-    setProducts((current) => editing?.id
-      ? current.map((item) => item.id === editing.id ? { ...item, ...data } : item)
-      : [{ ...data, id: `${Date.now()}` }, ...current]
-    );
+  const saveProduct = async (data) => {
+    try {
+      if (editing?._id || (editing?.id && String(editing.id).length === 24)) {
+        const prodId = editing._id || editing.id;
+        await apimethods.putApi(`/update-product/${prodId}`, data);
+      } else {
+        await apimethods.postApi("/add-product", data);
+      }
+      await loadProducts();
+    } catch {
+      // Offline / fallback save
+      setProducts((current) => editing?.id
+        ? current.map((item) => item.id === editing.id ? { ...item, ...data } : item)
+        : [{ ...data, id: `${Date.now()}` }, ...current]
+      );
+    }
     setEditing(null);
   };
 
@@ -62,7 +83,14 @@ export default function Products() {
     });
 
     if (result.isConfirmed) {
-      setProducts((current) => current.filter((product) => product.id !== id));
+      try {
+        if (String(id).length === 24) {
+          await apimethods.deleteApi(`/delete-product/${id}`);
+        }
+      } catch {
+        // ignore error
+      }
+      setProducts((current) => current.filter((product) => (product._id || product.id) !== id));
       await Swal.fire({
         title: "Deleted",
         icon: "success",

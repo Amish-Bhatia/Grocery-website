@@ -194,49 +194,6 @@ export default function Dashboard() {
 
         </div>
 
-
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-
-          <div>
-
-            <h2 className="font-semibold text-slate-900">
-              System Status
-            </h2>
-
-            <p className="mt-1 text-sm text-slate-500">
-              Your admin panel is ready.
-            </p>
-
-          </div>
-
-
-          <div className="mt-6 flex items-center gap-3 rounded-xl bg-emerald-50 p-4">
-
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white">
-
-              <CheckCircle2
-                size={19}
-                className="text-emerald-600"
-              />
-
-            </div>
-
-
-            <div>
-
-              <p className="text-sm font-semibold text-emerald-800">
-                System Online
-              </p>
-
-              <p className="text-xs text-emerald-700">
-                Admin dashboard is connected.
-              </p>
-
-            </div>
-
-          </div>
-
-        </div>
       </section>
     </div>
   );

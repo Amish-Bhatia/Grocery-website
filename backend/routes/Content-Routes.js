@@ -4,7 +4,7 @@ const contentController = require("../controller/Content-Controller");
 
 const router = express.Router();
 
-router.get("/content", middleware, contentController.getContent);
+router.get("/content", contentController.getContent);
 router.put("/content", middleware, authorize("content", "edit"), contentController.updateContent);
 
 module.exports = router;
