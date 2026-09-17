@@ -3,14 +3,11 @@ const express = require('express');
 const { middleware, authorize } = require("../middleware/auth");
 const router = express.Router();
 
-router.use(middleware);
-router.use(authorize("staff", "manage"));
-
-router.post("/add-staff", staffRoutes.addStaff);
-router.get("/get-staff", staffRoutes.getAllStaff);
-router.get("/get-staff/:id", staffRoutes.getSingleStaff);
-router.put("/update-staff/:id", staffRoutes.updateStaff);
-router.delete("/delete-staff/:id", staffRoutes.deleteStaff);
+router.post("/add-staff", middleware, authorize("staff", "manage"), staffRoutes.addStaff);
+router.get("/get-staff", middleware, authorize("staff", "manage"), staffRoutes.getAllStaff);
+router.get("/get-staff/:id", middleware, authorize("staff", "manage"), staffRoutes.getSingleStaff);
+router.put("/update-staff/:id", middleware, authorize("staff", "manage"), staffRoutes.updateStaff);
+router.delete("/delete-staff/:id", middleware, authorize("staff", "manage"), staffRoutes.deleteStaff);
 
 module.exports = router;    
  

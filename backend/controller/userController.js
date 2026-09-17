@@ -6,6 +6,46 @@ const transporter = require("../config/mailer");
 const { forgotPassword, Sendotp } = require("../Template/template");
 
 
+// ============================================================
+// SIGNUP — Register a new customer account
+// ============================================================
+const signup = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "Name, email and password are required" });
+    }
+
+    // Check if email already registered
+    const existing = await Users.findOne({ email });
+    if (existing) {
+      return res.status(400).json({ message: "An account with this email already exists" });
+    }
+
+    // Hash the password before saving
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = new Users({
+      name,
+      email,
+      password: hashedPassword,
+      role: "customer",
+      status: "active",
+    });
+
+    await newUser.save();
+
+    return res.status(201).json({
+      message: "Account created successfully! You can now sign in.",
+    });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({ message: "Unable to create account" });
+  }
+};
+
+
 
 const login = async (req, res) => {
   try {
@@ -254,6 +294,7 @@ const resetpassword = async (req, res) => {
 
 
 module.exports = {
+  signup,
   login,
   verifyOtp,
   forgotpassword,

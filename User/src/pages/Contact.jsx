@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { PhoneCall, Mail, MapPin, Send, Clock } from "lucide-react";
+import PageBanner from "../Components/PageBanner";
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
@@ -10,8 +11,9 @@ export default function Contact() {
   };
 
   return (
-    <div className="w-full bg-[#FCFCFC] py-12 font-[sans-serif]">
-      <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="w-full bg-[#FCFCFC] font-sans pb-12">
+      <PageBanner breadcrumbs={[{ label: "Contact Us" }]} />
+      <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         <div className="text-center max-w-xl mx-auto mb-12">
           <span className="text-xs font-bold text-[#00B207] uppercase tracking-wider block mb-2">
             Get In Touch

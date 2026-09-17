@@ -42,27 +42,57 @@ export const CartProvider = ({ children }) => {
   }, [cartItems]);
 
   const addToCart = (product, quantity = 1) => {
+    const prodId = product.id || product._id;
+    if (!prodId) return { success: false, message: "Invalid product" };
+
+    const maxStock =
+      product.stock !== undefined && product.stock !== null && !isNaN(product.stock)
+        ? Number(product.stock)
+        : 99;
+
+    let result = { success: true, reachedLimit: false, currentQty: quantity, maxStock };
+
     setCartItems((prevItems) => {
-      const existing = prevItems.find((item) => item.id === product.id);
+      const existing = prevItems.find((item) => item.id === prodId);
       if (existing) {
+        const targetQty = existing.quantity + quantity;
+        const cappedQty = Math.min(targetQty, maxStock);
+        if (targetQty > maxStock) {
+          result = { success: false, reachedLimit: true, currentQty: existing.quantity, maxStock };
+        } else {
+          result = { success: true, reachedLimit: cappedQty >= maxStock, currentQty: cappedQty, maxStock };
+        }
+
         return prevItems.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + quantity }
+          item.id === prodId
+            ? { ...item, quantity: cappedQty, stock: maxStock }
             : item
         );
       }
+
+      const initialQty = Math.min(quantity, maxStock);
+      result = {
+        success: initialQty > 0,
+        reachedLimit: initialQty >= maxStock,
+        currentQty: initialQty,
+        maxStock,
+      };
+
       return [
         ...prevItems,
         {
-          id: product.id,
+          id: prodId,
           name: product.name,
           price: Number(product.price) || 0,
-          quantity,
-          image: product.image,
+          quantity: initialQty,
+          image: product.image || "",
           category: product.category || "General",
+          stock: maxStock,
         },
       ];
     });
+
+    return result;
   };
 
   const updateQuantity = (id, quantity) => {
@@ -71,9 +101,17 @@ export const CartProvider = ({ children }) => {
       return;
     }
     setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === id ? { ...item, quantity } : item
-      )
+      prevItems.map((item) => {
+        if (item.id === id) {
+          const maxStock =
+            item.stock !== undefined && item.stock !== null && !isNaN(item.stock)
+              ? Number(item.stock)
+              : 99;
+          const cappedQty = Math.min(quantity, maxStock);
+          return { ...item, quantity: cappedQty, stock: maxStock };
+        }
+        return item;
+      })
     );
   };
 
@@ -85,7 +123,8 @@ export const CartProvider = ({ children }) => {
     setCartItems([]);
   };
 
-  const cartCount = cartItems.length;
+  // Total number of individual items (sum of all quantities)
+  const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   const cartTotal = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,

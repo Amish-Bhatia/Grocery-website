@@ -50,6 +50,30 @@ const middleware = async (req, res, next) => {
   }
 };
 
+const optionalMiddleware = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    req.user = null;
+    return next();
+  }
+
+  const token = authHeader.startsWith("Bearer ")
+    ? authHeader.split(" ")[1]
+    : authHeader;
+
+  try {
+    const verifyToken = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await Users.findById(verifyToken.userId)
+      .select("-password -otp")
+      .lean();
+    req.user = user || null;
+    next();
+  } catch (e) {
+    req.user = null;
+    next();
+  }
+};
+
 const authorize = (resource, action) => (req, res, next) => {
   if (req.user?.role === "admin") {
     return next();
@@ -60,8 +84,8 @@ const authorize = (resource, action) => (req, res, next) => {
   }
 
   return res.status(403).json({
-    message: "You do not have permission to perform this action"
+    message: "You do not have permission to perform this action",
   });
 };
 
-module.exports = { middleware, authorize };
+module.exports = { middleware, optionalMiddleware, authorize };

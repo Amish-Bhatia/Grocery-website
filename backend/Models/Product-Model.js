@@ -16,6 +16,10 @@ const productSchema = new mongoose.Schema(
       required: true,
       min: 0,
     },
+    originalPrice: {
+      type: Number,
+      default: null,
+    },
     discount: {
       type: Number,
       default: 0,
@@ -44,6 +48,22 @@ const productSchema = new mongoose.Schema(
     description: {
       type: String,
       default: "",
+    },
+    features: {
+      type: [String],
+      default: [],
+    },
+    tags: {
+      type: [String],
+      default: [],
+    },
+    unit: {
+      type: String,
+      default: "kg",
+    },
+    weight: {
+      type: String,
+      default: "1 kg",
     },
   },
   { timestamps: true }

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Lock, Mail, ArrowRight, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { Lock, Mail, ArrowRight, ShieldCheck, CheckCircle2, ArrowLeft } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import apimethods from "../services/api";
 
@@ -41,11 +41,11 @@ export default function Login() {
 
     try {
       const data = await apimethods.postApi("/verify-otp", { email, otp });
-      if (data?.token) {
+      if (data?.token && data?.user) {
         login(data.user, data.token);
         navigate("/");
       } else {
-        setError("Invalid OTP response from server");
+        setError(data?.message || "Verification failed");
       }
     } catch (err) {
       setError(err?.data?.message || err?.message || "Invalid OTP code.");
@@ -55,8 +55,16 @@ export default function Login() {
   };
 
   return (
-    <div className="w-full bg-[#FCFCFC] py-16 font-[sans-serif] flex items-center justify-center">
+    <div className="w-full bg-[#FCFCFC] py-16 font-[sans-serif] flex items-center justify-center min-h-[70vh]">
       <div className="w-full max-w-md mx-auto px-4">
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-[#00B207] mb-4 font-medium transition cursor-pointer"
+        >
+          <ArrowLeft size={16} />
+          <span>Back</span>
+        </button>
         <div className="bg-white p-8 sm:p-10 rounded-2xl border border-gray-100 shadow-sm">
           <div className="text-center mb-8">
             <Link to="/" className="inline-block mb-3">
@@ -182,16 +190,19 @@ export default function Login() {
             </form>
           )}
 
+          {/* ============================================================
+              REMOVED: "Open Admin Portal" link per requirements
+              Admin staff should use the admin frontend URL directly.
+              ============================================================ */}
+
           <div className="mt-8 pt-6 border-t text-center text-xs text-gray-500">
-            <span>Admin or staff member? </span>
-            <a
-              href="http://localhost:5173"
-              target="_blank"
-              rel="noreferrer"
+            <span>Don&apos;t have an account? </span>
+            <Link
+              to="/signup"
               className="text-[#00B207] font-semibold hover:underline"
             >
-              Open Admin Portal &rarr;
-            </a>
+              Create one here &rarr;
+            </Link>
           </div>
         </div>
       </div>

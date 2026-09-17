@@ -10,6 +10,7 @@ import {
   Settings,
   FileText,
   HelpCircle,
+  MessageSquare,
 } from "lucide-react";
 
 import { NavLink } from "react-router-dom";
@@ -61,6 +62,11 @@ const navItems = [
     label: "Content",
     path: "/dashboard/content",
     icon: FileText,
+  },
+  {
+    label: "Testimonials",
+    path: "/dashboard/testimonials",
+    icon: MessageSquare,
   },
 ];
 

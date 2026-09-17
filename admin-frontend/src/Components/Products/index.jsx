@@ -141,7 +141,20 @@ export default function Products() {
       </section>
 
       {editing && <AddEdit product={editing.id ? editing : null} categories={categories} onSave={saveProduct} onClose={() => setEditing(null)} />}
-      {viewing && <ProductDetails product={viewing} onClose={() => setViewing(null)} />}
+      {viewing && (
+        <ProductDetails
+          product={viewing}
+          onSave={async (data) => {
+            const prodId = viewing._id || viewing.id;
+            await saveProduct({ ...data, id: prodId, _id: prodId });
+          }}
+          onEdit={(p) => {
+            setViewing(null);
+            setEditing(p);
+          }}
+          onClose={() => setViewing(null)}
+        />
+      )}
     </div>
   );
 }

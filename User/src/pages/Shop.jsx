@@ -1,24 +1,15 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
-import { Search, ShoppingBag, Star, Filter, Heart, Eye } from "lucide-react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { Search, ShoppingBag, Star, Filter, Heart } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
+import PageBanner from "../Components/PageBanner";
 import apimethods from "../services/api";
-
-const defaultCatalog = [
-  { id: "p1", name: "Green Apple", price: 14.99, originalPrice: 20.99, discount: 50, rating: 4, category: "Fresh Fruit", image: "" },
-  { id: "p2", name: "Fresh Indian Malta", price: 20.00, originalPrice: null, discount: 0, rating: 5, category: "Fresh Fruit", image: "" },
-  { id: "p3", name: "Chinese Cabbage", price: 12.00, originalPrice: null, discount: 0, rating: 4, category: "Vegetables", image: "" },
-  { id: "p4", name: "Green Lettuce", price: 9.00, originalPrice: null, discount: 0, rating: 4, category: "Vegetables", image: "" },
-  { id: "p5", name: "Eggplant", price: 34.00, originalPrice: null, discount: 0, rating: 5, category: "Vegetables", image: "" },
-  { id: "p6", name: "Big Potatoes", price: 20.00, originalPrice: null, discount: 0, rating: 5, category: "Vegetables", image: "" },
-  { id: "p7", name: "Corn", price: 20.00, originalPrice: null, discount: 0, rating: 5, category: "Vegetables", image: "" },
-  { id: "p8", name: "Fresh Cauliflower", price: 12.00, originalPrice: null, discount: 0, rating: 4, category: "Vegetables", image: "" },
-  { id: "p9", name: "Green Capsicum", price: 9.00, originalPrice: 20.00, discount: 50, rating: 4, category: "Vegetables", image: "" },
-  { id: "p10", name: "Green Chili", price: 34.00, originalPrice: null, discount: 0, rating: 4, category: "Vegetables", image: "" },
-];
 
 export default function Shop() {
   const { addToCart } = useCart();
+  const { toggleWishlist, isWishlisted } = useWishlist();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [products, setProducts] = useState([]);
@@ -27,6 +18,7 @@ export default function Shop() {
 
   const selectedCategory = searchParams.get("category") || "all";
   const searchKeyword = searchParams.get("search") || "";
+  const [localSearch, setLocalSearch] = useState(searchKeyword);
   const [sortBy, setSortBy] = useState("latest");
 
   useEffect(() => {
@@ -44,51 +36,72 @@ export default function Shop() {
       .then((data) => {
         if (data?.products && data.products.length > 0) {
           setProducts(data.products);
-        } else {
-          setProducts(defaultCatalog);
         }
       })
-      .catch(() => setProducts(defaultCatalog))
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
+  // Filter and sort products client-side
   const filteredProducts = useMemo(() => {
     return products
       .filter((item) => {
         const matchesCat =
           selectedCategory === "all" ||
-          (item.category && item.category.toLowerCase() === selectedCategory.toLowerCase());
+          (item.category &&
+            item.category.toLowerCase() === selectedCategory.toLowerCase());
         const matchesSearch =
           !searchKeyword ||
-          (item.name && item.name.toLowerCase().includes(searchKeyword.toLowerCase()));
+          (item.name &&
+            item.name.toLowerCase().includes(searchKeyword.toLowerCase()));
         return matchesCat && matchesSearch;
       })
       .sort((a, b) => {
         if (sortBy === "price-low") return a.price - b.price;
         if (sortBy === "price-high") return b.price - a.price;
-        return 0;
+        return 0; // latest = default from backend (already sorted by createdAt desc)
       });
   }, [products, selectedCategory, searchKeyword, sortBy]);
 
-  const handleCategorySelect = (catName) => {
+  const handleCategorySelect = (cat) => {
     const params = new URLSearchParams(searchParams);
-    if (catName === "all") {
+    if (cat === "all") {
       params.delete("category");
     } else {
-      params.set("category", catName);
+      params.set("category", cat);
+    }
+    setSearchParams(params);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    const params = new URLSearchParams(searchParams);
+    if (localSearch.trim()) {
+      params.set("search", localSearch.trim());
+    } else {
+      params.delete("search");
     }
     setSearchParams(params);
   };
 
   return (
-    <div className="w-full bg-[#FCFCFC] py-8 font-[sans-serif]">
-      <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Page Breadcrumb / Title */}
+    <div className="w-full bg-[#FCFCFC] font-sans pb-12">
+      <PageBanner
+        breadcrumbs={[
+          { label: "Shop", path: selectedCategory !== "all" ? "/shop" : null },
+          ...(selectedCategory !== "all" ? [{ label: selectedCategory }] : []),
+        ]}
+      />
+      <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+
+        {/* Page Title */}
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Shop Catalog</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+              {selectedCategory !== "all" ? selectedCategory : "Shop Catalog"}
+            </h1>
             <p className="text-xs sm:text-sm text-gray-500 mt-1">
-              Showing {filteredProducts.length} fresh products
+              Showing {filteredProducts.length} products
             </p>
           </div>
 
@@ -105,6 +118,26 @@ export default function Shop() {
             </select>
           </div>
         </div>
+
+        {/* Search Bar */}
+        <form onSubmit={handleSearchSubmit} className="mb-6 flex gap-2">
+          <div className="flex-1 relative">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="search"
+              value={localSearch}
+              onChange={(e) => setLocalSearch(e.target.value)}
+              placeholder="Search products..."
+              className="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#00B207] bg-white"
+            />
+          </div>
+          <button
+            type="submit"
+            className="bg-[#00B207] text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-[#009606] transition"
+          >
+            Search
+          </button>
+        </form>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Left Sidebar: Categories Filter */}
@@ -130,21 +163,27 @@ export default function Shop() {
                 </button>
               </li>
 
-              {categories.map((cat) => (
-                <li key={cat._id || cat.id || cat.name}>
-                  <button
-                    type="button"
-                    onClick={() => handleCategorySelect(cat.name)}
-                    className={`w-full text-left px-3 py-2 rounded-lg text-sm transition font-medium flex items-center justify-between ${
-                      selectedCategory.toLowerCase() === cat.name.toLowerCase()
-                        ? "bg-emerald-50 text-[#00B207] font-semibold"
-                        : "text-gray-600 hover:bg-gray-50"
-                    }`}
-                  >
-                    <span>{cat.name}</span>
-                  </button>
-                </li>
-              ))}
+              {categories.map((cat) => {
+                const count = products.filter(
+                  (p) => p.category && p.category.toLowerCase() === cat.name.toLowerCase()
+                ).length;
+                return (
+                  <li key={cat._id || cat.name}>
+                    <button
+                      type="button"
+                      onClick={() => handleCategorySelect(cat.name)}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm transition font-medium flex items-center justify-between ${
+                        selectedCategory.toLowerCase() === cat.name.toLowerCase()
+                          ? "bg-emerald-50 text-[#00B207] font-semibold"
+                          : "text-gray-600 hover:bg-gray-50"
+                      }`}
+                    >
+                      <span>{cat.name}</span>
+                      <span className="text-xs text-gray-400">({count})</span>
+                    </button>
+                  </li>
+                );
+              })}
             </ul>
           </div>
 
@@ -174,45 +213,68 @@ export default function Shop() {
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {filteredProducts.map((product) => {
-                  const prodImg = product.image || "";
+                  // Dynamic sale tag
+                  const onSale =
+                    (product.discount && product.discount > 0) ||
+                    (product.originalPrice && product.originalPrice > product.price);
+
+                  const saleLabel = product.discount > 0
+                    ? `Sale ${product.discount}%`
+                    : product.originalPrice > product.price
+                      ? `Sale ${Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%`
+                      : "";
+
+                  const wishlisted = isWishlisted(product._id);
 
                   return (
                     <div
-                      key={product._id || product.id}
+                      key={product._id}
                       className="group relative bg-white rounded-xl p-4 border border-gray-100 hover:border-[#00B207] hover:shadow-md transition-all flex flex-col justify-between"
                     >
                       {/* Badge & Actions */}
                       <div className="flex items-center justify-between w-full mb-2">
-                        {product.discount > 0 ? (
+                        {onSale ? (
                           <span className="bg-[#EA4B48] text-white text-[10px] font-semibold px-2 py-0.5 rounded">
-                            Sale {product.discount}%
+                            {saleLabel}
                           </span>
                         ) : (
                           <span />
                         )}
 
-                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button
-                            type="button"
-                            className="w-7 h-7 rounded-full bg-gray-50 hover:bg-[#00B207] hover:text-white text-gray-600 flex items-center justify-center transition shadow-sm"
-                            title="Wishlist"
-                          >
-                            <Heart size={14} />
-                          </button>
-                        </div>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleWishlist(product._id);
+                          }}
+                          className={`w-7 h-7 rounded-full flex items-center justify-center transition shadow-sm ${
+                            wishlisted
+                              ? "bg-[#EA4B48] text-white"
+                              : "bg-gray-50 hover:bg-[#EA4B48] hover:text-white text-gray-600"
+                          }`}
+                          title={wishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
+                        >
+                          <Heart size={14} fill={wishlisted ? "white" : "none"} />
+                        </button>
                       </div>
 
-                      {/* Product Image Spot */}
-                      {/* USER_IMAGE_SLOT: Shop Product Image (Line 204) */}
-                      <div className="w-full h-36 flex items-center justify-center overflow-hidden my-2">
-                        {prodImg ? (
+                      {/* Product Image — clickable */}
+                      {/* =========================================================
+                         IMAGE PLACEHOLDER
+                         Required image: Product card image for "{product.name}"
+                         URL is built by the backend: product.image contains full URL.
+                         Upload product images via the admin panel.
+                         ========================================================= */}
+                      <div
+                        className="w-full h-36 flex items-center justify-center overflow-hidden my-2 cursor-pointer"
+                        onClick={() => navigate(`/product/${product._id}`)}
+                      >
+                        {product.image ? (
                           <img
-                            src={prodImg}
+                            src={product.image}
                             alt={product.name}
                             className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform"
-                            onError={(e) => {
-                              e.target.style.display = "none";
-                            }}
+                            onError={(e) => { e.target.style.display = "none"; }}
                           />
                         ) : (
                           <div className="w-20 h-20 rounded-full bg-emerald-50 text-[#00B207] flex items-center justify-center font-bold text-lg">
@@ -226,7 +288,10 @@ export default function Shop() {
                         <span className="text-[11px] text-gray-400 font-medium uppercase block mb-1">
                           {product.category || "Grocery"}
                         </span>
-                        <h4 className="text-sm font-semibold text-gray-800 line-clamp-1 group-hover:text-[#00B207] transition-colors mb-1.5">
+                        <h4
+                          className="text-sm font-semibold text-gray-800 line-clamp-1 hover:text-[#00B207] transition-colors mb-1.5 cursor-pointer"
+                          onClick={() => navigate(`/product/${product._id}`)}
+                        >
                           {product.name}
                         </h4>
 
@@ -234,7 +299,7 @@ export default function Shop() {
                           <span className="text-base font-bold text-gray-900">
                             ${Number(product.price).toFixed(2)}
                           </span>
-                          {product.originalPrice && (
+                          {product.originalPrice && product.originalPrice > product.price && (
                             <span className="text-xs text-gray-400 line-through">
                               ${Number(product.originalPrice).toFixed(2)}
                             </span>
@@ -252,7 +317,6 @@ export default function Shop() {
                               />
                             ))}
                           </div>
-
                           <button
                             type="button"
                             onClick={() => addToCart(product, 1)}

@@ -10,6 +10,7 @@ import Category from "./Components/Category";
 import Products from "./Components/Products";
 import Content from "./Components/Content";
 import FAQs from "./Components/FAQs";
+import Testimonials from "./Components/Testimonials";
 
 
 const ProtectedRoute = ({ children }) => {
@@ -53,6 +54,7 @@ export default function App() {
           <Route path="products" element={<Products />} />
           <Route path="content" element={<Content />} />
           <Route path="faqs" element={<FAQs />} />
+          <Route path="testimonials" element={<Testimonials />} />
 
         </Route>
 
