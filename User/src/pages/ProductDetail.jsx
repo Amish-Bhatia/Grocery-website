@@ -63,7 +63,7 @@ export default function ProductDetail() {
   if (loading) {
     return (
       <div className="w-full bg-[#FCFCFC] py-16 font-[sans-serif]">
-        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 animate-pulse">
             <div className="bg-gray-100 rounded-2xl h-[420px]" />
             <div className="space-y-4">
@@ -107,7 +107,7 @@ export default function ProductDetail() {
           { label: product.name },
         ]}
       />
-      <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8 pt-8">
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
           {/* ---- Left: Product Image ---- */}

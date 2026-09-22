@@ -6,10 +6,12 @@ import DashboardLayout from "./Components/Layout/DashboardLayout";
 import Dashboard from "./Components/Dashboard";
 import Staff from "./Components/Staff";
 import StaffAddEdit from "./Components/Staff/AddEdit";
+import StaffView from "./Components/Staff/View";
 import Category from "./Components/Category";
 import Products from "./Components/Products";
 import Content from "./Components/Content";
 import FAQs from "./Components/FAQs";
+import FaqAddEdit from "./Components/FAQs/AddEdit";
 import Testimonials from "./Components/Testimonials";
 
 
@@ -50,10 +52,13 @@ export default function App() {
           <Route path="staff" element={<Staff />} />
           <Route path="staff/add" element={<StaffAddEdit />} />
           <Route path="staff/edit/:id" element={<StaffAddEdit />} />
+          <Route path="staff/view/:id" element={<StaffView />} />
           <Route path="categories" element={<Category />} />
           <Route path="products" element={<Products />} />
           <Route path="content" element={<Content />} />
           <Route path="faqs" element={<FAQs />} />
+          <Route path="faqs/add" element={<FaqAddEdit />} />
+          <Route path="faqs/edit/:id" element={<FaqAddEdit />} />
           <Route path="testimonials" element={<Testimonials />} />
 
         </Route>

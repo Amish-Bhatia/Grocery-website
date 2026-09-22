@@ -7,6 +7,17 @@ const emptyForm = {
   image: null,
 };
 
+const getCategoryImageUrl = (image) => {
+  if (!image) return "";
+  if (typeof image === "string") {
+    if (image.startsWith("http://") || image.startsWith("https://")) {
+      return image;
+    }
+    return `${API_BASE_URL}/uploads/categories/${image.replace(/^\/+/, "")}`;
+  }
+  return "";
+};
+
 export default function AddEdit({ showForm, setShowForm }) {
   const [formData, setFormData] = useState(emptyForm);
   const [categories, setCategories] = useState([]);
@@ -116,9 +127,9 @@ export default function AddEdit({ showForm, setShowForm }) {
     <div>
 
       {showForm && (
-        <div className="mb-8 flex justify-center">
+        <div className="mb-8 w-full">
 
-          <form onSubmit={handleSubmit} className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8">
+          <form onSubmit={handleSubmit} className="w-full rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8">
 
             <div className="mb-6 flex items-center justify-between">
 
@@ -131,28 +142,21 @@ export default function AddEdit({ showForm, setShowForm }) {
 
             </div>
 
-            <div className="mb-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+              <div>
+                <label htmlFor="category-name" className="mb-2 block text-sm font-medium text-slate-700">Category Name</label>
+                <input id="category-name" type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Enter category name" required className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100" />
+              </div>
 
-              <label htmlFor="category-name" className="mb-2 block text-sm font-medium text-slate-700">Category Name</label>
-
-              <input id="category-name" type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Enter category name" required className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100" />
-
+              <div>
+                <label htmlFor="category-image" className="mb-2 block text-sm font-medium text-slate-700">Category Image</label>
+                <input id="category-image" type="file" name="image" accept="image/jpeg,image/png,image/webp" onChange={handleChange} className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-600 file:mr-4 file:rounded-md file:border-0 file:bg-emerald-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-emerald-700" />
+              </div>
             </div>
 
-            <div className="mb-6">
-
-              <label htmlFor="category-image" className="mb-2 block text-sm font-medium text-slate-700">Category Image</label>
-
-              <input id="category-image" type="file" name="image" accept="image/jpeg,image/png,image/webp" onChange={handleChange} className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-600 file:mr-4 file:rounded-md file:border-0 file:bg-emerald-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-emerald-700" />
-
-            </div>
-
-            <div className="flex gap-3">
-
-              <button type="button" onClick={() => setShowForm(false)} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">Cancel</button>
-
-              <button type="submit" disabled={loading} className="w-full rounded-lg bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60">{loading ? "Saving..." : "Add Category"}</button>
-
+            <div className="flex justify-end gap-3">
+              <button type="button" onClick={() => setShowForm(false)} className="rounded-lg border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">Cancel</button>
+              <button type="submit" disabled={loading} className="rounded-lg bg-emerald-700 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60">{loading ? "Saving..." : "Add Category"}</button>
             </div>
 
           </form>
@@ -161,27 +165,56 @@ export default function AddEdit({ showForm, setShowForm }) {
       )}
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-
-        {categories.length > 0 ? categories.map((item) => (
-          <div key={item._id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-
-            {item.image ? <img src={`${API_BASE_URL}/uploads/categories/${item.image}`} alt={item.name} className="h-44 w-full object-cover" /> : <div className="flex h-44 items-center justify-center bg-slate-100 text-sm text-slate-400">No image</div>}
-
-            <div className="flex items-center justify-between gap-3 p-4">
-
-              <div className="min-w-0">
-                <p className="truncate font-semibold text-slate-800">{item.name}</p>
+        {categories.length > 0 ? (
+          categories.map((item) => (
+            <div
+              key={item._id}
+              className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md flex flex-col justify-between"
+            >
+              <div className="relative h-44 w-full overflow-hidden bg-slate-100 flex items-center justify-center">
+                {item.image ? (
+                  <>
+                    <img
+                      src={getCategoryImageUrl(item.image)}
+                      alt={item.name}
+                      className="h-full w-full object-cover"
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                        const fallback = e.target.parentElement?.querySelector(".image-fallback");
+                        if (fallback) fallback.style.display = "flex";
+                      }}
+                    />
+                    <div className="image-fallback hidden h-full w-full items-center justify-center bg-emerald-50 text-2xl font-bold text-[#019D3E]">
+                      {item.name?.charAt(0)?.toUpperCase() || "C"}
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-emerald-50 text-2xl font-bold text-[#019D3E]">
+                    {item.name?.charAt(0)?.toUpperCase() || "C"}
+                  </div>
+                )}
               </div>
 
-              <button type="button" onClick={() => deleteCategory(item._id)} className="shrink-0 text-sm font-medium text-red-600 transition hover:text-red-800">Delete</button>
+              <div className="flex items-center justify-between gap-3 p-4">
+                <div className="min-w-0">
+                  <p className="truncate font-semibold text-slate-800">{item.name}</p>
+                </div>
 
+                <button
+                  type="button"
+                  onClick={() => deleteCategory(item._id)}
+                  className="shrink-0 text-sm font-medium text-red-600 transition hover:text-red-800 cursor-pointer"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
-
+          ))
+        ) : (
+          <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500 sm:col-span-2 lg:col-span-3 xl:col-span-4">
+            No categories found.
           </div>
-        )) : (
-          <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500 sm:col-span-2 lg:col-span-3 xl:col-span-4">No categories found.</div>
         )}
-
       </div>
 
     </div>

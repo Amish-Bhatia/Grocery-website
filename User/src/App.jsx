@@ -14,6 +14,7 @@ import ProductDetail from './pages/ProductDetail.jsx'
 import Categories from './pages/Categories.jsx'
 import Wishlist from './pages/Wishlist.jsx'
 import Checkout from './pages/Checkout.jsx'
+import FAQs from './pages/FAQs.jsx'
 
 function App() {
   return (
@@ -34,6 +35,8 @@ function App() {
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/categories" element={<Categories />} />
+          <Route path="/faqs" element={<FAQs />} />
+          <Route path="/faq" element={<FAQs />} />
         </Routes>
       </main>
       <Footer />

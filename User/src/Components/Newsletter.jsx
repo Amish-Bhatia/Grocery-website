@@ -20,7 +20,7 @@ export default function Newsletter() {
 
   return (
     <section className="bg-[#F7F7F7] py-10 border-t border-gray-100">
-      <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
           {/* Left Content */}
           <div className="text-center lg:text-left max-w-lg">

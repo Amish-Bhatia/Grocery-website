@@ -87,7 +87,7 @@ export default function Testimonials() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6">
+    <div className="w-full px-4 py-6">
       <PageHeader
         title="Client Testimonials"
         description="Manage the client reviews shown on the storefront home page."

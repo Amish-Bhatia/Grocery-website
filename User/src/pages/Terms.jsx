@@ -19,7 +19,7 @@ export default function Terms() {
 
   return (
     <div className="w-full bg-[#FCFCFC] py-12 font-[sans-serif]">
-      <div className="max-w-[900px] mx-auto px-4 sm:px-6">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="bg-white p-8 sm:p-12 rounded-2xl border border-gray-100 shadow-sm">
           <span className="text-xs font-bold text-[#00B207] uppercase tracking-wider block mb-2">
             Legal &amp; Policy

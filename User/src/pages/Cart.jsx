@@ -66,7 +66,7 @@ export default function Cart() {
         {/* Breadcrumb Top Banner with Back Button */}
         <PageBanner breadcrumbs={[{ label: "Shopping Cart" }]} />
 
-        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-8">
             My Shopping Cart
           </h1>

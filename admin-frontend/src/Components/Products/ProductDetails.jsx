@@ -96,7 +96,7 @@ export default function ProductDetails({ product, onSave, onEdit, onClose }) {
       title="Product Description & Details"
       description="View and dynamically manage product features, descriptions, and specifications."
       onClose={onClose}
-      className="max-w-3xl"
+      className="w-full max-w-full"
     >
       <div className="p-6 space-y-6 max-h-[78vh] overflow-y-auto">
         {/* Product Quick Header Card */}

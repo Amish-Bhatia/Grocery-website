@@ -6,7 +6,6 @@ import apimethods from "../../Methods/ApiClient";
 import EmptyState from "../Common/EmptyState";
 import ErrorAlert from "../Common/ErrorAlert";
 import PageHeader from "../Common/PageHeader";
-import StaffDetails from "./StaffDetails";
 import StaffTable from "./StaffTable";
 
 export default function Staff() {
@@ -14,8 +13,6 @@ export default function Staff() {
   const [staff, setStaff] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState(null);
-  const [viewingId, setViewingId] = useState(null);
-  const [selectedStaff, setSelectedStaff] = useState(null);
   const [error, setError] = useState("");
 
   const fetchStaff = async () => {
@@ -32,19 +29,6 @@ export default function Staff() {
   };
 
   useEffect(() => { fetchStaff(); }, []);
-
-  const viewStaff = async (id) => {
-    try {
-      setViewingId(id);
-      setError("");
-      const data = await apimethods.getApi(`/get-staff/${id}`);
-      setSelectedStaff(data.staffMember || data.staff || data.staffs || data);
-    } catch (requestError) {
-      setError(requestError.message || "Unable to load staff member.");
-    } finally {
-      setViewingId(null);
-    }
-  };
 
   const deleteStaff = async (id) => {
     const result = await Swal.fire({
@@ -78,7 +62,7 @@ export default function Staff() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6">
+    <div className="w-full space-y-6">
       <PageHeader
         title="Staff"
         description="Manage the staff members who have access to your admin panel."
@@ -96,15 +80,19 @@ export default function Staff() {
         </header>
 
         {loading ? <Loading /> : staff.length ? (
-          <StaffTable staff={staff} viewingId={viewingId} deletingId={deletingId} onView={viewStaff} onEdit={(id) => navigate(`/dashboard/staff/edit/${id}`)} onDelete={deleteStaff} />
+          <StaffTable
+            staff={staff}
+            deletingId={deletingId}
+            onView={(id) => navigate(`/dashboard/staff/view/${id}`)}
+            onEdit={(id) => navigate(`/dashboard/staff/edit/${id}`)}
+            onDelete={deleteStaff}
+          />
         ) : (
           <EmptyState icon={Users} title="No staff members found" description="Add your first staff member to give someone access to the admin panel.">
             <button type="button" onClick={() => navigate("/dashboard/staff/add")} className="mt-4 inline-flex items-center gap-2 rounded-lg bg-[#019D3E] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#008d37]"><UserPlus size={17} />Add Staff</button>
           </EmptyState>
         )}
       </section>
-
-      {selectedStaff && <StaffDetails staff={selectedStaff} onClose={() => setSelectedStaff(null)} />}
     </div>
   );
 }

@@ -21,6 +21,29 @@ export default function Shop() {
   const [localSearch, setLocalSearch] = useState(searchKeyword);
   const [sortBy, setSortBy] = useState("latest");
 
+  // min and max price 
+  const { minPriceLimit, maxPriceLimit } = useMemo(() => {
+    if (!products || products.length === 0) {
+      return { minPriceLimit: 0, maxPriceLimit: 100 };
+    }
+    const prices = products.map((p) => Number(p.price) || 0);
+    return {
+      minPriceLimit: Math.floor(Math.min(...prices)),
+      maxPriceLimit: Math.ceil(Math.max(...prices)),
+    };
+  }, [products]);
+
+  const [maxPrice, setMaxPrice] = useState(100);
+
+  // Set initial slider to max price when products load so all products show by default
+  useEffect(() => {
+    if (products.length > 0) {
+      const highest = Math.ceil(Math.max(...products.map((p) => Number(p.price) || 0)));
+      setMaxPrice(highest);
+    }
+  }, [products]);
+
+
   useEffect(() => {
     // 1. Fetch categories
     apimethods
@@ -54,14 +77,17 @@ export default function Shop() {
           !searchKeyword ||
           (item.name &&
             item.name.toLowerCase().includes(searchKeyword.toLowerCase()));
-        return matchesCat && matchesSearch;
+
+        const matchesPrice = Number(item.price) <= maxPrice;
+
+        return matchesCat && matchesSearch && matchesPrice;
       })
       .sort((a, b) => {
         if (sortBy === "price-low") return a.price - b.price;
         if (sortBy === "price-high") return b.price - a.price;
-        return 0; // latest = default from backend (already sorted by createdAt desc)
+        return 0; // latest = default from backend
       });
-  }, [products, selectedCategory, searchKeyword, sortBy]);
+  }, [products, selectedCategory, searchKeyword, sortBy, maxPrice]);
 
   const handleCategorySelect = (cat) => {
     const params = new URLSearchParams(searchParams);
@@ -92,7 +118,7 @@ export default function Shop() {
           ...(selectedCategory !== "all" ? [{ label: selectedCategory }] : []),
         ]}
       />
-      <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8 pt-8">
 
         {/* Page Title */}
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
@@ -110,8 +136,7 @@ export default function Shop() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="bg-white border border-gray-200 text-xs sm:text-sm rounded-lg px-3 py-2 outline-none focus:border-[#00B207]"
-            >
+              className="bg-white border border-gray-200 text-xs sm:text-sm rounded-lg px-3 py-2 outline-none focus:border-[#00B207]"    >
               <option value="latest">Latest</option>
               <option value="price-low">Price: Low to High</option>
               <option value="price-high">Price: High to Low</option>
@@ -176,8 +201,8 @@ export default function Shop() {
                         selectedCategory.toLowerCase() === cat.name.toLowerCase()
                           ? "bg-emerald-50 text-[#00B207] font-semibold"
                           : "text-gray-600 hover:bg-gray-50"
-                      }`}
-                    >
+                      }`}>
+                        
                       <span>{cat.name}</span>
                       <span className="text-xs text-gray-400">({count})</span>
                     </button>
@@ -185,6 +210,34 @@ export default function Shop() {
                 );
               })}
             </ul>
+
+            {/* Single divider */}
+            <hr className="my-4 border-gray-200" />
+
+            {/* Price Slider */}
+            <div className="mt-4">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-semibold text-gray-800">Price</h3>
+                <span className="text-xs font-semibold text-[#00B207]">
+                  ${minPriceLimit} — ${maxPrice}
+                </span>
+              </div>
+
+              <input
+                type="range"
+                min={minPriceLimit}
+                max={maxPriceLimit}
+                step="1"
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(Number(e.target.value))}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#00B207]"
+              />
+
+              <div className="flex justify-between text-[11px] text-gray-400 mt-1">
+                <span>${minPriceLimit}</span>
+                <span>${maxPriceLimit}</span>
+              </div>
+            </div>
           </div>
 
           {/* Right Area: Products Grid */}
@@ -205,8 +258,7 @@ export default function Shop() {
                 <button
                   type="button"
                   onClick={() => handleCategorySelect("all")}
-                  className="mt-4 inline-block bg-[#00B207] text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-[#009606] transition"
-                >
+                  className="mt-4 inline-block bg-[#00B207] text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-[#009606] transition">
                   Clear Filters
                 </button>
               </div>

@@ -72,7 +72,7 @@ export default function Content() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6">
+    <div className="w-full space-y-6">
       <PageHeader title="Content" description="Read the website's legal content." />
 
       <section className="space-y-4">
@@ -125,14 +125,14 @@ export default function Content() {
                       </select>
                     </label>
                   </div>
-                  <div ref={editorRef} contentEditable suppressContentEditableWarning dangerouslySetInnerHTML={{ __html: selectedContent.body }} className="mt-4 min-h-44 max-w-3xl rounded-lg border border-slate-200 p-4 text-sm leading-7 text-slate-600 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100" />
+                  <div ref={editorRef} contentEditable suppressContentEditableWarning dangerouslySetInnerHTML={{ __html: selectedContent.body }} className="mt-4 min-h-44 w-full rounded-lg border border-slate-200 p-4 text-sm leading-7 text-slate-600 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100" />
                   <div className="mt-4 flex gap-2">
                     <button type="button" onClick={saveContent} disabled={isSaving} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"><Check size={16} />{isSaving ? "Saving..." : "Save"}</button>
                     <button type="button" onClick={cancelEditing} disabled={isSaving} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"><X size={16} />Cancel</button>
                   </div>
                 </>
               ) : (
-                <div className="prose prose-slate mt-4 max-w-3xl text-sm leading-7" dangerouslySetInnerHTML={{ __html: selectedContent.body }} />
+                <div className="prose prose-slate mt-4 max-w-none w-full text-sm leading-7" dangerouslySetInnerHTML={{ __html: selectedContent.body }} />
               )}
             </>
           )}

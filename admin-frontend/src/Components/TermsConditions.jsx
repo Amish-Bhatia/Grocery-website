@@ -9,7 +9,7 @@ export default function TermsConditions() {
   const handleCreate = () => setMessage("The page hasn't been created yet.");
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6">
+    <div className="w-full space-y-6">
       <PageHeader title="Terms & Conditions" />
 
       <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">

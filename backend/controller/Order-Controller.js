@@ -101,4 +101,14 @@ const getMyOrders = async (req, res) => {
   }
 };
 
-module.exports = { placeOrder, getMyOrders };
+// Get all orders (for admin)
+const getAllOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({}).sort({ createdAt: -1 });
+    return res.status(200).json({ success: true, orders });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { placeOrder, getMyOrders, getAllOrders };

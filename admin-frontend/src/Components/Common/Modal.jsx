@@ -1,8 +1,8 @@
 import { X } from "lucide-react";
 
-export default function Modal({ title, description, onClose, children, className = "max-w-md" }) {
+export default function Modal({ title, description, onClose, children, className = "w-full max-w-full" }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-900/40 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-900/50 p-2 sm:p-4 md:p-6 backdrop-blur-xs">
       <div className={`w-full rounded-2xl border border-slate-200 bg-white shadow-2xl ${className}`}>
         <div className="flex items-start justify-between border-b border-slate-100 px-6 py-5">
           <div>

@@ -101,7 +101,7 @@ export default function Products() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6">
+    <div className="w-full space-y-6">
       <PageHeader
         title="Products"
         description="Manage your grocery products, pricing, and inventory."

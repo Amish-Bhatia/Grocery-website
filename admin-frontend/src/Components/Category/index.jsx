@@ -7,7 +7,7 @@ export default function Category() {
   const [showForm, setShowForm] = useState(false);
 
   return (
-    <div className="mx-auto max-w-7xl">
+    <div className="w-full">
 
       <PageHeader
         title="Categories"

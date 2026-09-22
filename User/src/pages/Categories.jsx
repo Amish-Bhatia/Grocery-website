@@ -23,7 +23,7 @@ export default function Categories() {
   return (
     <div className="w-full bg-[#FCFCFC] font-sans pb-12">
       <PageBanner breadcrumbs={[{ label: "All Categories" }]} />
-      <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8 pt-8">
 
         {/* Page Header */}
         <div className="flex items-center justify-between mb-8">
@@ -64,7 +64,7 @@ export default function Categories() {
                 <div className="w-20 h-20 mb-3 flex items-center justify-center overflow-hidden">
                   {/* =========================================================
                      IMAGE PLACEHOLDER
-                     Required image: Category image for "{category.name}"
+                     Required i                                                                                                                                                       ry image for "{category.name}"
                      Upload the category image via the admin panel.
                      The image URL comes from category.image (fetched from backend).
                      ========================================================= */}

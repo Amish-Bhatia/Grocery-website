@@ -20,7 +20,7 @@ export default function Login() {
     e.preventDefault();
     setError("");
     setMessage("");
-    setLoading(true);
+    setLoading(true); 
 
     try {
       const data = await apimethods.postApi("/login", { email, password });

@@ -94,7 +94,7 @@ const Navbar = () => {
           1. TOP UTILITY BAR
           ============================================================ */}
       <div className="w-full bg-white border-b border-gray-200 text-xs text-gray-500">
-        <div className="max-w-[1320px] mx-auto px-4 sm:px-6">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-[42px] gap-4 max-sm:justify-end">
             {/* Left: Location */}
             <div className="hidden sm:flex items-center gap-1.5 text-gray-500 text-xs truncate">
@@ -222,7 +222,7 @@ const Navbar = () => {
           2. MAIN HEADER BAR (WHITE)
           ============================================================ */}
       <div className="w-full bg-white py-5 border-b border-gray-100 lg:border-b-0">
-        <div className="max-w-[1320px] mx-auto px-4 sm:px-6">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap lg:flex-nowrap items-center justify-between gap-4 lg:gap-6">
             {/* Left: Brand Logo & Mobile Toggle */}
             <div className="flex items-center shrink-0 min-w-auto lg:min-w-[160px] gap-2">
@@ -324,7 +324,7 @@ const Navbar = () => {
           3. BOTTOM CHARCOAL NAVIGATION BAR
           ============================================================ */}
       <nav className="hidden lg:block w-full bg-[#333333]" aria-label="Main Navigation">
-        <div className="max-w-[1320px] mx-auto px-4 sm:px-6">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-[52px]">
             {/* Left: Navigation Links */}
             <ul className="flex items-center gap-7 list-none m-0 p-0">

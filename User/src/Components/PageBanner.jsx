@@ -13,7 +13,7 @@ export default function PageBanner({ title, breadcrumbs = [] }) {
           "linear-gradient(rgba(10, 20, 15, 0.88), rgba(10, 20, 15, 0.94)), url('/bottomRight.jpg')",
       }}
     >
-      <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+      <div className="w-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Breadcrumb Path */}
         <nav className="flex items-center gap-2 text-xs sm:text-sm text-gray-400" aria-label="Breadcrumb">
           <Link

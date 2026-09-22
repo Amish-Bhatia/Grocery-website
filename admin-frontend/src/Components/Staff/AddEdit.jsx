@@ -194,7 +194,7 @@ export default function AddEdit() {
 
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6">
+    <div className="w-full space-y-6">
 
       <section className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 

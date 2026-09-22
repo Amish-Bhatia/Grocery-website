@@ -189,7 +189,7 @@ export default function Checkout() {
           ]}
         />
 
-        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
           <form onSubmit={handlePlaceOrder}>
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
               {/* Left Column: Billing Information (Screenshot 4) */}

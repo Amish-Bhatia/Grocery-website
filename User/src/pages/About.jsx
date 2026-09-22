@@ -94,7 +94,7 @@ export default function About() {
           SECTION 1: 100% Trusted Organic Food Store (Screenshot 5)
           ============================================================ */}
       <section className="py-14 sm:py-20 bg-white">
-        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             {/* Left Content */}
             <div className="max-w-xl">
@@ -128,7 +128,7 @@ export default function About() {
           SECTION 2: 100% Trusted Organic Food Store (6 Features)
           ============================================================ */}
       <section className="py-14 sm:py-20 bg-[#F9F9F9] border-y border-gray-100">
-        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
             {/* Left Image: Farmer in field with greens */}
             <div className="lg:col-span-6 rounded-2xl overflow-hidden shadow-md border border-gray-200 h-[400px] sm:h-[480px] bg-[#EAF0E7] relative">
@@ -252,7 +252,7 @@ export default function About() {
           SECTION 3: We Delivered, You Enjoy Your Order. (Screenshot 5)
           ============================================================ */}
       <section className="py-14 sm:py-20 bg-white">
-        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             {/* Left Content */}
             <div className="max-w-xl">
@@ -309,7 +309,7 @@ export default function About() {
           SECTION 4: Our Awesome Team (Screenshot 5)
           ============================================================ */}
       <section className="py-14 sm:py-20 bg-[#F9F9F9] border-t border-gray-100">
-        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-12">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
               Our Awesome Team
@@ -353,7 +353,7 @@ export default function About() {
           SECTION 5: Client Testimonials (Screenshot 5)
           ============================================================ */}
       <section className="py-14 sm:py-20 bg-white">
-        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-10">
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
               Client Testimonials
@@ -425,11 +425,11 @@ export default function About() {
           SECTION 6: Partner Brands Strip (Screenshot 5)
           ============================================================ */}
       <div className="border-t border-gray-100 bg-white py-6 sm:py-8">
-        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 flex justify-center items-center">
+        <div className="w-full px-4 sm:px-6 lg:px-8 flex justify-center items-center">
           <img
             src="/above follow us on insta.png"
             alt="Partner Brands"
-            className="w-full max-w-[1320px] h-auto object-contain"
+            className="w-full h-auto object-contain"
           />
         </div>
       </div>
