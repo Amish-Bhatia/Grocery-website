@@ -4,6 +4,7 @@ import { X, ShoppingBag, Heart, Check, ArrowRight } from "lucide-react";
 import Swal from "sweetalert2";
 import PageBanner from "../Components/PageBanner";
 import Newsletter from "../Components/Newsletter";
+import { getProductPricing } from "../Components/Home/constants";
 import { useWishlist } from "../context/WishlistContext";
 import { useCart } from "../context/CartContext";
 import apimethods from "../services/api";
@@ -84,7 +85,8 @@ export default function Wishlist() {
       return;
     }
 
-    addToCart(item, 1);
+    const pricing = getProductPricing(item);
+    addToCart({ ...item, price: pricing.price, originalPrice: pricing.originalPrice }, 1);
     Swal.fire({
       toast: true,
       position: "top-end",
@@ -175,16 +177,21 @@ export default function Wishlist() {
 
                           {/* Price */}
                           <td className="py-5 px-6 whitespace-nowrap">
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm sm:text-base font-bold text-gray-900">
-                                ${Number(item.price).toFixed(2)}
-                              </span>
-                              {item.originalPrice && item.originalPrice > item.price && (
-                                <span className="text-xs sm:text-sm text-gray-400 line-through">
-                                  ${Number(item.originalPrice).toFixed(2)}
-                                </span>
-                              )}
-                            </div>
+                            {(() => {
+                              const pricing = getProductPricing(item);
+                              return (
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm sm:text-base font-bold text-gray-900">
+                                    ${pricing.price.toFixed(2)}
+                                  </span>
+                                  {pricing.originalPrice && pricing.originalPrice > pricing.price && (
+                                    <span className="text-xs sm:text-sm text-gray-400 line-through">
+                                      ${pricing.originalPrice.toFixed(2)}
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            })()}
                           </td>
 
                           {/* Stock Status */}

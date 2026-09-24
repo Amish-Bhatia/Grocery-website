@@ -6,26 +6,51 @@ const placeOrder = async (req, res) => {
   try {
     const {
       items,
+      products,
       subtotal,
+      discount = 0,
+      couponCode = "",
       shipping,
       total,
+      totalAmount,
       paymentMethod = "COD",
+      paymentStatus,
+      paymentDetails,
       customerName,
       customerEmail,
       shippingAddress,
     } = req.body;
 
+    const rawItems = items || products || [];
+
     // Validate items
-    if (!items || items.length === 0) {
+    if (!rawItems || rawItems.length === 0) {
       return res.status(400).json({ message: "Cart is empty. Add products before placing an order." });
     }
 
+    const calculatedTotal = Number(total ?? totalAmount ?? subtotal ?? 0);
+    const calculatedShipping = Number(shipping ?? 0);
+    const calculatedDiscount = Number(discount ?? 0);
+    const calculatedSubtotal = Number(subtotal ?? (calculatedTotal + calculatedDiscount - calculatedShipping)) || calculatedTotal;
+
+    const resolvedCustomerName =
+      customerName ||
+      shippingAddress?.customerName ||
+      (req.user && req.user.name) ||
+      "Ecobazar Customer";
+
+    const resolvedCustomerEmail =
+      customerEmail ||
+      shippingAddress?.email ||
+      (req.user && req.user.email) ||
+      "customer@ecobazar.com";
+
     const userId = req.user ? req.user._id : null;
-    const userName = (req.user && req.user.name) || customerName || "Ecobazar Customer";
-    const userEmail = (req.user && req.user.email) || customerEmail || "customer@ecobazar.com";
+    const userName = resolvedCustomerName;
+    const userEmail = resolvedCustomerEmail;
 
     // Validate stock for all items before placing order
-    for (const item of items) {
+    for (const item of rawItems) {
       const prodId = item.id || item._id || item.productId;
       if (prodId) {
         try {
@@ -43,31 +68,38 @@ const placeOrder = async (req, res) => {
       }
     }
 
+    const orderPaymentStatus = paymentStatus || (paymentMethod === "COD" ? "pending" : "pending");
+    const orderStatus = orderPaymentStatus === "paid" ? "processing" : "pending";
+
     // Create the order
     const newOrder = new Order({
       userId,
       userName,
       userEmail,
       paymentMethod,
+      paymentStatus: orderPaymentStatus,
+      paymentDetails: paymentDetails || {},
       shippingAddress: shippingAddress || {},
-      items: items.map((item) => ({
+      items: rawItems.map((item) => ({
         productId: String(item.id || item._id || item.productId || "item"),
-        name: item.name,
+        name: item.name || item.title || "Product",
         price: Number(item.price) || 0,
         quantity: Number(item.quantity) || 1,
         image: item.image || "",
         category: item.category || "",
       })),
-      subtotal: Number(subtotal) || 0,
-      shipping: Number(shipping) || 0,
-      total: Number(total) || 0,
-      status: "pending",
+      subtotal: calculatedSubtotal,
+      discount: calculatedDiscount,
+      couponCode: couponCode || "",
+      shipping: calculatedShipping,
+      total: calculatedTotal,
+      status: orderStatus,
     });
 
     await newOrder.save();
 
     // Deduct stock for ordered products
-    for (const item of items) {
+    for (const item of rawItems) {
       const prodId = item.id || item._id || item.productId;
       if (prodId) {
         try {
@@ -77,6 +109,23 @@ const placeOrder = async (req, res) => {
         } catch (e) {
           // Ignore non-database items
         }
+      }
+    }
+
+    // Increment coupon usage if applied
+    if (couponCode && String(couponCode).trim()) {
+      try {
+        const Coupon = require("../Models/couponModel");
+        const formattedCode = String(couponCode).trim().toUpperCase();
+        await Coupon.findOneAndUpdate(
+          { code: { $regex: new RegExp(`^${formattedCode}$`, 'i') } },
+          {
+            $inc: { usageCount: 1 },
+            ...(userId ? { $addToSet: { usedBy: userId } } : {})
+          }
+        );
+      } catch (couponErr) {
+        console.error("Failed to update coupon usage stats:", couponErr);
       }
     }
 
@@ -111,4 +160,33 @@ const getAllOrders = async (req, res) => {
   }
 };
 
-module.exports = { placeOrder, getMyOrders, getAllOrders };
+// Update order status (simplest logic)
+const updateOrderStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    if (!status) {
+      return res.status(400).json({ message: "Status is required" });
+    }
+
+    const order = await Order.findByIdAndUpdate(
+      id,
+      { status: status.toLowerCase().trim() },
+      { new: true }
+    );
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Order status updated successfully",
+      order,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { placeOrder, getMyOrders, getAllOrders, updateOrderStatus };

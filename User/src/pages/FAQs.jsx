@@ -1,162 +1,174 @@
 import React, { useState, useEffect } from "react";
-import { ChevronDown, HelpCircle, Search } from "lucide-react";
+import { Plus, Minus } from "lucide-react";
 import PageBanner from "../Components/PageBanner";
+import Newsletter from "../Components/Newsletter";
 import apimethods from "../services/api";
+
+const DEFAULT_FAQS = [
+  {
+    _id: "df1",
+    question: "In elementum est a ante sodales iaculis.",
+    answer:
+      "Morbi porttitor ligula in nunc varius sagittis. Proin dui nisi, laoreet ut tempor ac, cursus vitae eros. Cras quis ultricies elit. Proin ac lectus arcu. Maecenas aliquet vel tellus at accumsan. Donec a eros non massa vulputate ornare. Vivamus ornare commodo ante, at commodo felis congue vitae.",
+  },
+  {
+    _id: "df2",
+    question: "Etiam lobortis massa eu nibh tempor elementum.",
+    answer:
+      "Morbi porttitor ligula in nunc varius sagittis. Proin dui nisi, laoreet ut tempor ac, cursus vitae eros. Cras quis ultricies elit. Proin ac lectus arcu. Maecenas aliquet vel tellus at accumsan. Donec a eros non massa vulputate ornare. Vivamus ornare commodo ante, at commodo felis congue vitae.",
+  },
+  {
+    _id: "df3",
+    question: "In elementum est a ante sodales iaculis.",
+    answer:
+      "Morbi porttitor ligula in nunc varius sagittis. Proin dui nisi, laoreet ut tempor ac, cursus vitae eros. Cras quis ultricies elit. Proin ac lectus arcu. Maecenas aliquet vel tellus at accumsan. Donec a eros non massa vulputate ornare. Vivamus ornare commodo ante, at commodo felis congue vitae.",
+  },
+  {
+    _id: "df4",
+    question: "Aenean quis quam nec lacus semper dignissim.",
+    answer:
+      "Morbi porttitor ligula in nunc varius sagittis. Proin dui nisi, laoreet ut tempor ac, cursus vitae eros. Cras quis ultricies elit. Proin ac lectus arcu. Maecenas aliquet vel tellus at accumsan. Donec a eros non massa vulputate ornare. Vivamus ornare commodo ante, at commodo felis congue vitae.",
+  },
+  {
+    _id: "df5",
+    question: "Nulla tincidunt eros id tempus accumsan.",
+    answer:
+      "Morbi porttitor ligula in nunc varius sagittis. Proin dui nisi, laoreet ut tempor ac, cursus vitae eros. Cras quis ultricies elit. Proin ac lectus arcu. Maecenas aliquet vel tellus at accumsan. Donec a eros non massa vulputate ornare. Vivamus ornare commodo ante, at commodo felis congue vitae.",
+  },
+];
 
 export default function FAQs() {
   const [faqs, setFaqs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openIndex, setOpenIndex] = useState(0);
-  const [search, setSearch] = useState("");
 
   useEffect(() => {
+    setLoading(true);
     apimethods
       .getApi("/get-faqs?status=Published")
       .then((data) => {
         if (data?.faqs && Array.isArray(data.faqs) && data.faqs.length > 0) {
           setFaqs(data.faqs);
         } else {
-          setFaqs(defaultFaqs);
+          // If no published faqs, try all faqs
+          apimethods
+            .getApi("/get-faqs")
+            .then((allData) => {
+              if (allData?.faqs && Array.isArray(allData.faqs) && allData.faqs.length > 0) {
+                setFaqs(allData.faqs);
+              } else {
+                setFaqs(DEFAULT_FAQS);
+              }
+            })
+            .catch(() => setFaqs(DEFAULT_FAQS));
         }
       })
       .catch(() => {
-        setFaqs(defaultFaqs);
+        setFaqs(DEFAULT_FAQS);
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
-  const defaultFaqs = [
-    {
-      _id: "df1",
-      question: "How do I place an order?",
-      answer:
-        "Browse our organic grocery catalog, add your desired items to your shopping cart, and proceed to checkout with secure payment options.",
-    },
-    {
-      _id: "df2",
-      question: "How can I track my delivery?",
-      answer:
-        "Once your order is confirmed, you can track its progress directly from your account order history, or via email notifications.",
-    },
-    {
-      _id: "df3",
-      question: "What are your delivery hours and charges?",
-      answer:
-        "We deliver 7 days a week from 8:00 AM to 9:00 PM. We offer free shipping on eligible orders, with express delivery options available at checkout.",
-    },
-    {
-      _id: "df4",
-      question: "What is your return or refund policy?",
-      answer:
-        "We offer a 100% freshness guarantee and 30-day money-back policy. If any product does not meet your expectations, contact us for an instant refund or replacement.",
-    },
-    {
-      _id: "df5",
-      question: "Are all products 100% organic and fresh?",
-      answer:
-        "Yes, all our fruits, vegetables, and groceries are certified organic and sourced directly from verified local sustainable farms daily.",
-    },
-  ];
+  const toggleAccordion = (idx) => {
+    setOpenIndex(openIndex === idx ? -1 : idx);
+  };
 
-  const displayedFaqs = faqs.length > 0 ? faqs : defaultFaqs;
-  const filteredFaqs = displayedFaqs.filter((item) => {
-    const q = search.toLowerCase();
-    return (
-      item.question?.toLowerCase().includes(q) ||
-      item.answer?.toLowerCase().includes(q)
-    );
-  });
+  const displayedFaqs = faqs.length > 0 ? faqs : DEFAULT_FAQS;
 
   return (
-    <div className="w-full bg-[#FCFCFC] font-sans pb-16">
-      <PageBanner breadcrumbs={[{ label: "FAQs" }]} />
+    <div className="w-full bg-white font-sans min-h-screen">
+      {/* Banner */}
+      <PageBanner breadcrumbs={[{ label: "Faqs" }]} />
 
-      <div className="w-full px-4 sm:px-6 lg:px-12 pt-8">
-        <div className="text-center max-w-xl mx-auto mb-10">
-          <span className="text-xs font-bold text-[#00B207] uppercase tracking-wider block mb-2">
-            Help &amp; Support
-          </span>
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
-            Frequently Asked Questions
-          </h1>
-          <p className="text-sm text-gray-500">
-            Find quick answers to common questions regarding orders, shipping, organic guarantees, and more.
-          </p>
+      {/* Main 2-Column Content */}
+      <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+          {/* Left Column: Heading + Dynamic Backend Accordion */}
+          <div className="lg:col-span-6 xl:col-span-7">
+            <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-extrabold text-gray-900 leading-[1.2] tracking-tight mb-8">
+              Welcome, Let’s Talk
+              <br />
+              About Our Ecobazar
+            </h1>
 
-          {/* Search bar */}
-          <div className="relative mt-6 max-w-md mx-auto">
-            <Search
-              size={18}
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"
-            />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search for answers..."
-              className="w-full pl-10 pr-4 py-2.5 text-sm bg-white border border-gray-200 rounded-full outline-none focus:border-[#00B207] focus:ring-2 focus:ring-emerald-50 transition shadow-xs"
-            />
-          </div>
-        </div>
+            {loading ? (
+              <div className="space-y-4">
+                {[...Array(4)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="h-16 bg-[#F2F2F2] rounded-lg animate-pulse"
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {displayedFaqs.map((item, idx) => {
+                  const isOpen = openIndex === idx;
 
-        {loading ? (
-          <div className="space-y-4">
-            {[...Array(4)].map((_, i) => (
-              <div
-                key={i}
-                className="h-20 bg-white border border-gray-100 rounded-xl animate-pulse"
-              />
-            ))}
-          </div>
-        ) : filteredFaqs.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center text-gray-500 shadow-xs">
-            <HelpCircle size={40} className="mx-auto text-gray-300 mb-3" />
-            <h3 className="font-semibold text-gray-800 text-base mb-1">
-              No matching questions found
-            </h3>
-            <p className="text-xs text-gray-400">
-              Try searching with different keywords or contact our support team.
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-3.5">
-            {filteredFaqs.map((faq, index) => {
-              const isOpen = openIndex === index;
-              return (
-                <div
-                  key={faq._id || index}
-                  className="bg-white rounded-xl border border-gray-100 shadow-xs overflow-hidden transition"
-                >
-                  <button
-                    type="button"
-                    onClick={() => setOpenIndex(isOpen ? null : index)}
-                    className="w-full px-6 py-4.5 text-left flex items-center justify-between gap-4 cursor-pointer hover:bg-gray-50/70 transition"
-                  >
-                    <span className="text-sm sm:text-base font-semibold text-gray-900">
-                      {faq.question}
-                    </span>
-                    <span
-                      className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-transform duration-200 ${
+                  return (
+                    <div
+                      key={item._id || item.id || idx}
+                      className={`transition-all duration-200 rounded-lg overflow-hidden ${
                         isOpen
-                          ? "bg-emerald-50 text-[#00B207] rotate-180"
-                          : "bg-gray-100 text-gray-500"
+                          ? "border border-[#00B207] bg-white shadow-2xs"
+                          : "bg-[#F2F2F2] hover:bg-[#EBEBEB] border border-transparent"
                       }`}
                     >
-                      <ChevronDown size={16} />
-                    </span>
-                  </button>
+                      <button
+                        type="button"
+                        onClick={() => toggleAccordion(idx)}
+                        className={`w-full px-5 sm:px-6 py-4 flex items-center justify-between text-left cursor-pointer transition-colors ${
+                          isOpen ? "pb-2" : ""
+                        }`}
+                      >
+                        <span
+                          className={`text-sm sm:text-base font-semibold transition-colors ${
+                            isOpen ? "text-[#00B207]" : "text-gray-800"
+                          }`}
+                        >
+                          {item.question}
+                        </span>
+                        <span
+                          className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ml-3 transition-colors ${
+                            isOpen ? "text-[#00B207]" : "text-gray-500"
+                          }`}
+                        >
+                          {isOpen ? <Minus size={18} /> : <Plus size={18} />}
+                        </span>
+                      </button>
 
-                  {isOpen && (
-                    <div className="px-6 pb-5 pt-1 text-xs sm:text-sm text-gray-600 leading-relaxed border-t border-gray-50">
-                      {faq.answer}
+                      {isOpen && (
+                        <div className="px-5 sm:px-6 pb-5 pt-1 text-xs sm:text-sm text-gray-500 leading-relaxed">
+                          {item.answer}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              );
-            })}
+                  );
+                })}
+              </div>
+            )}
           </div>
-        )}
+
+          {/* Right Column: Farmer with fresh vegetables */}
+          <div className="lg:col-span-6 xl:col-span-5 flex justify-center items-center">
+            <div className="relative w-full max-w-[500px] flex justify-center items-center">
+              <img
+                src="/faqsMan.png"
+                alt="Ecobazar Organic Farmer"
+                className="w-full h-auto max-h-[580px] object-contain mx-auto block hover:scale-[1.02] transition-transform duration-500"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "/about-mission-farmer.jpg";
+                }}
+              />
+            </div>
+          </div>
+        </div>
       </div>
+
+      <Newsletter />
     </div>
   );
 }

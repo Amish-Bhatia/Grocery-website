@@ -22,6 +22,8 @@ const { seedTestimonialsIfEmpty } = require("./controller/Testimonial-Controller
 const faqRoutes = require("./routes/FAQ-Routes");
 const { seedFaqsIfEmpty } = require("./controller/FAQ-Controller");
 const dashboardRoutes = require("./routes/Dashboard-Routes");
+const paymentRoutes = require("./routes/paymentRoutes");
+const couponRoutes = require("./routes/couponRoute");
 
 // Seed default testimonials if collection is empty
 seedTestimonialsIfEmpty();
@@ -69,6 +71,8 @@ app.use("/", orderRoutes);
 app.use("/", testimonialRoutes);
 app.use("/", faqRoutes);
 app.use("/", dashboardRoutes);
+app.use("/", paymentRoutes);
+app.use("/", couponRoutes);
 app.use("/protected", protectedRoutes);
 
 app.get("/health", (req, res) => res.json({ ok: true }));

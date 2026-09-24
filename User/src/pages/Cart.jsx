@@ -5,46 +5,72 @@ import Swal from "sweetalert2";
 import PageBanner from "../Components/PageBanner";
 import Newsletter from "../Components/Newsletter";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 
 export default function Cart() {
   const navigate = useNavigate();
-  const { cartItems, updateQuantity, removeFromCart, cartTotal } = useCart();
+  const { isLoggedIn } = useAuth();
+  const {
+    cartItems,
+    updateQuantity,
+    removeFromCart,
+    cartTotal,
+    appliedCoupon,
+    applyCoupon,
+    removeCoupon,
+    discountPercent,
+    discountAmount,
+    cartFinalTotal,
+  } = useCart();
   const [couponCode, setCouponCode] = useState("");
-  const [couponApplied, setCouponApplied] = useState(false);
 
-  const handleApplyCoupon = (e) => {
+  const handleProceedToCheckout = () => {
+    const token = localStorage.getItem("userToken");
+    if (!isLoggedIn && !token) {
+      Swal.fire({
+        icon: "info",
+        title: "Sign In Required",
+        text: "Please sign in to your account to proceed to checkout.",
+        confirmButtonText: "Sign In",
+        confirmButtonColor: "#00B207",
+      }).then(() => {
+        navigate("/login?redirect=/checkout");
+      });
+      return;
+    }
+    navigate("/checkout");
+  };
+
+  const handleApplyCoupon = async (e) => {
     e.preventDefault();
     if (!couponCode.trim()) return;
-
-    if (couponCode.toUpperCase() === "SAVE10" || couponCode.toUpperCase() === "ECOBAZAR") {
-      setCouponApplied(true);
+    const res = await applyCoupon(couponCode);
+    if (res.success) {
+      setCouponCode("");
       Swal.fire({
         icon: "success",
         title: "Coupon Applied!",
-        text: "You have unlocked a discount!",
+        text: res.message,
         timer: 1800,
         showConfirmButton: false,
       });
     } else {
       Swal.fire({
-        icon: "info",
-        title: "Coupon Code",
-        text: `Coupon "${couponCode}" applied successfully!`,
-        timer: 1500,
+        icon: "warning",
+        title: "Invalid Coupon Code",
+        text: res.message,
+        timer: 2000,
         showConfirmButton: false,
       });
     }
   };
-
   const handleQuantityChange = (item, delta) => {
     const newQty = item.quantity + delta;
     const maxStock = item.stock || 99;
-
     if (newQty < 1) {
       removeFromCart(item.id);
       return;
     }
-
     if (newQty > maxStock) {
       Swal.fire({
         toast: true,
@@ -56,14 +82,11 @@ export default function Cart() {
       });
       return;
     }
-
     updateQuantity(item.id, newQty);
   };
-
   return (
     <div className="w-full bg-white font-sans min-h-screen flex flex-col justify-between">
       <div>
-        {/* Breadcrumb Top Banner with Back Button */}
         <PageBanner breadcrumbs={[{ label: "Shopping Cart" }]} />
 
         <div className="w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
@@ -222,28 +245,59 @@ export default function Cart() {
                 </div>
               </div>
 
-              {/* Bottom Row: Coupon Code (Left) + Cart Total (Right) (Screenshot 3) */}
+              {/* Bottom Row: Coupon Code (Left) + Cart Total (Right) */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 {/* Left: Coupon Code Card */}
                 <div className="lg:col-span-6 bg-white border border-gray-200 rounded-xl p-6 sm:p-7 shadow-xs">
                   <h3 className="text-base font-bold text-gray-900 mb-4">
                     Coupon Code
                   </h3>
-                  <form onSubmit={handleApplyCoupon} className="relative flex items-center">
-                    <input
-                      type="text"
-                      value={couponCode}
-                      onChange={(e) => setCouponCode(e.target.value)}
-                      placeholder="Enter code"
-                      className="w-full border border-gray-200 rounded-full py-3.5 pl-6 pr-36 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#00B207]"
-                    />
-                    <button
-                      type="submit"
-                      className="absolute right-1.5 bg-[#333333] hover:bg-black text-white font-semibold text-xs px-6 py-2.5 rounded-full transition cursor-pointer"
-                    >
-                      Apply Coupon
-                    </button>
-                  </form>
+
+                  {appliedCoupon ? (
+                    <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-center justify-between">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono font-bold text-sm text-[#00B207]">
+                            {appliedCoupon.code}
+                          </span>
+                          <span className="bg-emerald-100 text-[#00B207] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
+                            Active
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-600 mt-1">
+                          {appliedCoupon.discountPercent}% discount applied to your cart!
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={removeCoupon}
+                        className="text-xs text-red-500 hover:text-red-700 font-semibold px-3 py-1.5 rounded-lg border border-red-200 hover:bg-red-50 transition cursor-pointer"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <form onSubmit={handleApplyCoupon} className="relative flex items-center">
+                        <input
+                          type="text"
+                          value={couponCode}
+                          onChange={(e) => setCouponCode(e.target.value)}
+                          placeholder="Enter code (e.g. SAVE10, SAVE20)"
+                          className="w-full border border-gray-200 rounded-full py-3.5 pl-6 pr-36 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#00B207]"
+                        />
+                        <button
+                          type="submit"
+                          className="absolute right-1.5 bg-[#333333] hover:bg-black text-white font-semibold text-xs px-6 py-2.5 rounded-full transition cursor-pointer"
+                        >
+                          Apply Coupon
+                        </button>
+                      </form>
+                      <p className="text-[11px] text-gray-400 mt-2 pl-2">
+                        Try <span className="font-mono font-bold text-gray-600">SAVE10</span> for 10% off or <span className="font-mono font-bold text-gray-600">SAVE20</span> for 20% off.
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Right: Cart Total Card */}
@@ -256,20 +310,36 @@ export default function Cart() {
                       <span>Subtotal:</span>
                       <span className="font-semibold text-gray-900">${cartTotal.toFixed(2)}</span>
                     </div>
+
+                    {appliedCoupon && (
+                      <div className="flex justify-between text-[#00B207] font-medium">
+                        <span>Discount ({appliedCoupon.code} - {discountPercent}%):</span>
+                        <span className="font-bold">-${discountAmount.toFixed(2)}</span>
+                      </div>
+                    )}
+
                     <div className="flex justify-between text-gray-600">
                       <span>Shipping:</span>
                       <span className="font-semibold text-[#00B207]">Free</span>
                     </div>
+
                     <div className="flex justify-between text-base font-bold text-gray-900 pt-3 border-t border-gray-100">
                       <span>Total:</span>
-                      <span className="text-lg font-bold text-gray-900">${cartTotal.toFixed(2)}</span>
+                      <div className="text-right">
+                        {appliedCoupon && (
+                          <span className="text-xs text-gray-400 line-through block font-normal">
+                            ${cartTotal.toFixed(2)}
+                          </span>
+                        )}
+                        <span className="text-lg font-bold text-gray-900">${cartFinalTotal.toFixed(2)}</span>
+                      </div>
                     </div>
                   </div>
 
                   {/* Proceed to checkout button */}
                   <button
                     type="button"
-                    onClick={() => navigate("/checkout")}
+                    onClick={handleProceedToCheckout}
                     className="w-full mt-6 bg-[#00B207] hover:bg-[#009606] text-white py-3.5 rounded-full font-semibold text-sm transition-colors text-center shadow-xs cursor-pointer"
                   >
                     Proceed to checkout

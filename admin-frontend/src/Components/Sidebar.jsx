@@ -11,17 +11,17 @@ import {
   FileText,
   HelpCircle,
   MessageSquare,
+  Ticket,
 } from "lucide-react";
 
-import { NavLink } from "react-router-dom";
-import { useState } from "react";
-
+import { NavLink, useLocation } from "react-router-dom";
 
 const navItems = [
   {
     label: "Dashboard",
     path: "/dashboard",
     icon: LayoutDashboard,
+    end: true,
   },
   {
     label: "Products",
@@ -30,12 +30,17 @@ const navItems = [
   },
   {
     label: "Orders",
-    path: "/orders",
+    path: "/dashboard/orders",
     icon: ShoppingCart,
   },
   {
+    label: "Coupons",
+    path: "/dashboard/coupons",
+    icon: Ticket,
+  },
+  {
     label: "Customers",
-    path: "/customers",
+    path: "/dashboard/customers",
     icon: Users,
   },
   {
@@ -50,7 +55,7 @@ const navItems = [
   },
   {
     label: "Settings",
-    path: "/settings",
+    path: "/dashboard/settings",
     icon: Settings,
   },
   {
@@ -70,9 +75,8 @@ const navItems = [
   },
 ];
 
-
 export default function Sidebar({ collapsed, setCollapsed }) {
-  const [activeItem, setActiveItem] = useState("Dashboard");
+  const location = useLocation();
 
   return (
     <aside
@@ -80,11 +84,8 @@ export default function Sidebar({ collapsed, setCollapsed }) {
         collapsed ? "w-20" : "w-64"
       }`}
     >
-
       <div className="relative flex h-16 items-center border-b border-slate-100 px-5">
-
         <div>
-
           {!collapsed ? (
             <img
               src="/Logo.svg"
@@ -98,71 +99,57 @@ export default function Sidebar({ collapsed, setCollapsed }) {
               className="h-8 w-auto"
             />
           )}
-
         </div>
-
 
         <button
           type="button"
           onClick={() => setCollapsed(!collapsed)}
-          className="absolute -right-3 top-4 flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 hover:text-emerald-700"
+          className="absolute -right-3 top-4 flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 hover:text-emerald-700 cursor-pointer"
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-
           {collapsed ? (
             <ChevronRight size={15} />
           ) : (
             <ChevronLeft size={15} />
           )}
-
         </button>
-
       </div>
 
-
-      <nav className="space-y-1.5 px-3 py-5">
-
+      <nav className="space-y-1.5 px-3 py-5 overflow-y-auto max-h-[calc(100vh-4rem)]">
         {navItems.map((item) => {
-
           const Icon = item.icon;
+          const isItemActive = item.end
+            ? location.pathname === item.path
+            : location.pathname.startsWith(item.path);
 
           return (
             <NavLink
               key={item.label}
               to={item.path}
-              onClick={() => setActiveItem(item.label)}
-              className={() =>
-                `group flex h-11 items-center rounded-lg text-sm font-medium transition ${
-                  collapsed
-                    ? "justify-center px-0"
-                    : "gap-3 px-3"
-                } ${
-                  activeItem === item.label
-                    ? "bg-linear-to-r from-[#019D3E] to-[#00491B] text-white shadow-sm"
-                    : "text-slate-500 hover:bg-linear-to-r hover:from-[#019D3E] hover:to-[#00491B] hover:text-white"
-                }`
-              }
+              end={item.end}
+              className={`group flex h-11 items-center rounded-lg text-sm font-medium transition ${
+                collapsed ? "justify-center px-0" : "gap-3 px-3"
+              } ${
+                isItemActive
+                  ? "bg-linear-to-r from-[#019D3E] to-[#00491B] text-white shadow-sm"
+                  : "text-slate-500 hover:bg-linear-to-r hover:from-[#019D3E] hover:to-[#00491B] hover:text-white"
+              }`}
               title={collapsed ? item.label : undefined}
             >
-
               <Icon
                 size={19}
                 strokeWidth={2}
                 className="shrink-0"
               />
 
-
               {!collapsed && (
                 <span className="truncate">
                   {item.label}
                 </span>
               )}
-
             </NavLink>
           );
-
         })}
-
       </nav>
     </aside>
   );

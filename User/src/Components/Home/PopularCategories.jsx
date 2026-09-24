@@ -20,20 +20,13 @@ export default function PopularCategories({ categories = [] }) {
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
         {categories.slice(0, 12).map((category, index) => {
-            const isSelected =
-            category.active ||
-            category.name.toLowerCase().includes("fresh vegetable");
           const imgSrc = getCategoryImageUrl(category);
 
           return (
             <Link
               key={category._id || index}
               to={`/shop?category=${encodeURIComponent(category.name)}`}
-              className={`group p-4 bg-white rounded-lg text-center border transition-all duration-200 flex flex-col items-center justify-center min-h-[160px] ${
-                isSelected
-                  ? "border-gray-100 hover:border-[#00B207] hover:shadow-md"
-                  : "border-gray-100 hover:border-[#00B207] hover:shadow-md"
-              }`}
+              className="group p-4 bg-white rounded-lg text-center border border-gray-100 hover:border-[#00B207] hover:shadow-md transition-all duration-200 flex flex-col items-center justify-center min-h-[160px]"
             >
               <div className="w-20 h-20 mb-3 flex items-center justify-center overflow-hidden">
                 {imgSrc ? (
@@ -63,13 +56,7 @@ export default function PopularCategories({ categories = [] }) {
                   </div>
                 )}
               </div>
-              <span
-                className={`text-sm font-medium transition-colors ${
-                  isSelected
-                    ? "text-[#00B207] font-semibold"
-                    : "text-gray-800 group-hover:text-[#00B207]"
-                }`}
-              >
+              <span className="text-sm font-medium transition-colors text-gray-800 group-hover:text-[#00B207]">
                 {category.name}
               </span>
             </Link>

@@ -1,211 +1,148 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { Lock, Mail, ArrowRight, ShieldCheck, CheckCircle2, ArrowLeft } from "lucide-react";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
+import Swal from "sweetalert2";
 import { useAuth } from "../context/AuthContext";
 import apimethods from "../services/api";
+import Newsletter from '../Components/Newsletter';
+import PageBanner from "../Components/PageBanner";
 
 export default function Login() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirect = searchParams.get("redirect") || "/";
   const { login } = useAuth();
 
-  const [step, setStep] = useState("credentials"); // "credentials" | "otp"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [otp, setOtp] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
 
-  const handleCredentialsSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setMessage("");
-    setLoading(true); 
 
-    try {
-      const data = await apimethods.postApi("/login", { email, password });
-      setMessage(data?.message || "OTP sent to your email!");
-      setStep("otp");
-    } catch (err) {
-      setError(err?.data?.message || err?.message || "Login failed. Please check your credentials.");
-    } finally {
-      setLoading(false);
+    if (!email || !password) {
+      Swal.fire({
+        icon: "warning",
+        title: "Missing Fields",
+        text: "Please enter both email and password.",
+      });
+      return;
     }
-  };
 
-  const handleOtpSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setMessage("");
     setLoading(true);
 
     try {
-      const data = await apimethods.postApi("/verify-otp", { email, otp });
+      const data = await apimethods.postApi("/login", { email, password });
       if (data?.token && data?.user) {
         login(data.user, data.token);
-        navigate("/");
+        Swal.fire({
+          icon: "success",
+          title: "Signed In Successfully",
+          text: `Welcome back, ${data.user.name || "Customer"}!`,
+          timer: 1500,
+          showConfirmButton: false,
+        });
+        navigate(redirect, { replace: true });
       } else {
-        setError(data?.message || "Verification failed");
+        throw new Error(data?.message || "Login failed");
       }
     } catch (err) {
-      setError(err?.data?.message || err?.message || "Invalid OTP code.");
+      Swal.fire({
+        icon: "error",
+        title: "Login Failed",
+        text: err?.data?.message || err?.message || "Invalid email or password.",
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="w-full bg-[#FCFCFC] py-16 font-[sans-serif] flex items-center justify-center min-h-[70vh]">
-      <div className="w-full max-w-md mx-auto px-4">
-        <button
-          type="button"
-          onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-[#00B207] mb-4 font-medium transition cursor-pointer"
-        >
-          <ArrowLeft size={16} />
-          <span>Back</span>
-        </button>
-        <div className="bg-white p-8 sm:p-10 rounded-2xl border border-gray-100 shadow-sm">
-          <div className="text-center mb-8">
-            <Link to="/" className="inline-block mb-3">
-              <img
-                src="/Logo.svg"
-                alt="Ecobazar"
-                className="h-8 mx-auto"
-                onError={(e) => {
-                  e.target.style.display = "none";
-                }}
-              />
-            </Link>
-            <h1 className="text-2xl font-bold text-gray-900">
-              {step === "credentials" ? "Sign In" : "Enter Verification OTP"}
-            </h1>
-            <p className="text-xs text-gray-500 mt-1">
-              {step === "credentials"
-                ? "Access your Ecobazar customer account"
-                : `We sent a 6-digit OTP code to ${email}`}
-            </p>
+    <>
+      <PageBanner breadcrumbs={[{ label: "Account" }, { label: "Sign In" }]} />
+      <div className="w-full bg-[#f9fafb] py-14 px-4 font-sans flex items-center justify-center min-h-[60vh]">
+      <div className="w-full max-w-[420px] bg-white rounded-2xl border border-gray-100 p-8 sm:p-9 shadow-sm">
+        {/* Title */}
+        <h1 className="text-2xl font-bold text-gray-900 text-center mb-6">
+          Sign In
+        </h1>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Email */}
+          <div>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+              className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#00B207] transition"
+            />
           </div>
 
-          {error && (
-            <div className="mb-5 p-3 rounded-lg bg-red-50 text-red-600 text-xs font-medium">
-              {error}
-            </div>
-          )}
-
-          {message && (
-            <div className="mb-5 p-3 rounded-lg bg-emerald-50 text-[#00B207] text-xs font-medium flex items-center gap-2">
-              <CheckCircle2 size={16} />
-              <span>{message}</span>
-            </div>
-          )}
-
-          {step === "credentials" ? (
-            <form onSubmit={handleCredentialsSubmit} className="flex flex-col gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                  Email Address
-                </label>
-                <div className="relative flex items-center">
-                  <span className="absolute left-3 text-gray-400">
-                    <Mail size={16} />
-                  </span>
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
-                    className="w-full text-sm border border-gray-200 rounded-lg pl-9 pr-4 py-2.5 outline-none focus:border-[#00B207]"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                  Password
-                </label>
-                <div className="relative flex items-center">
-                  <span className="absolute left-3 text-gray-400">
-                    <Lock size={16} />
-                  </span>
-                  <input
-                    type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
-                    className="w-full text-sm border border-gray-200 rounded-lg pl-9 pr-4 py-2.5 outline-none focus:border-[#00B207]"
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full mt-2 bg-[#00B207] hover:bg-[#009606] text-white py-3 rounded-full font-bold text-sm transition shadow-sm flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
-              >
-                <span>{loading ? "Sending OTP..." : "Send OTP & Login"}</span>
-                <ArrowRight size={16} />
-              </button>
-            </form>
-          ) : (
-            <form onSubmit={handleOtpSubmit} className="flex flex-col gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                  6-Digit OTP Code
-                </label>
-                <div className="relative flex items-center">
-                  <span className="absolute left-3 text-gray-400">
-                    <ShieldCheck size={16} />
-                  </span>
-                  <input
-                    type="text"
-                    required
-                    maxLength={6}
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
-                    placeholder="123456"
-                    className="w-full text-sm tracking-widest text-center font-bold border border-gray-200 rounded-lg pl-9 pr-4 py-2.5 outline-none focus:border-[#00B207]"
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full mt-2 bg-[#00B207] hover:bg-[#009606] text-white py-3 rounded-full font-bold text-sm transition shadow-sm flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
-              >
-                <span>{loading ? "Verifying..." : "Verify & Enter"}</span>
-                <ArrowRight size={16} />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setStep("credentials")}
-                className="text-xs text-gray-500 hover:text-gray-900 mt-2 text-center"
-              >
-                &larr; Back to login
-              </button>
-            </form>
-          )}
-
-          {/* ============================================================
-              REMOVED: "Open Admin Portal" link per requirements
-              Admin staff should use the admin frontend URL directly.
-              ============================================================ */}
-
-          <div className="mt-8 pt-6 border-t text-center text-xs text-gray-500">
-            <span>Don&apos;t have an account? </span>
-            <Link
-              to="/signup"
-              className="text-[#00B207] font-semibold hover:underline"
+          {/* Password with Eye toggle */}
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              className="w-full border border-gray-200 rounded-lg px-4 py-3 pr-11 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#00B207] transition"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition cursor-pointer"
             >
-              Create one here &rarr;
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+
+          {/* Remember me & Forget Password */}
+          <div className="flex items-center justify-between text-xs text-gray-500 pt-1">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="w-4 h-4 rounded border-gray-300 text-[#00B207] focus:ring-[#00B207]"
+              />
+              <span>Remember me</span>
+            </label>
+            <Link
+              to="/forgot-password"
+              className="text-gray-500 hover:text-[#00B207] transition-colors"
+            >
+              Forget Password
             </Link>
           </div>
-        </div>
+
+          {/* Login Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full !mt-5 bg-[#00B207] hover:bg-[#009606] text-white py-3.5 rounded-full font-bold text-sm transition-colors shadow-xs disabled:opacity-50 cursor-pointer"
+          >
+            {loading ? "Signing in..." : "Login"}
+          </button>
+        </form>
+
+        {/* Footer */}
+        <p className="mt-6 text-center text-xs text-gray-500">
+          Don't have account?{" "}
+          <Link
+            to={`/signup${redirect !== "/" ? `?redirect=${encodeURIComponent(redirect)}` : ""}`}
+            className="font-bold text-gray-900 hover:underline"
+          >
+            Register
+          </Link>
+        </p>
       </div>
     </div>
+      <Newsletter/>
+      </>
   );
 }

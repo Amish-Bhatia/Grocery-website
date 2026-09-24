@@ -9,11 +9,13 @@ import StaffAddEdit from "./Components/Staff/AddEdit";
 import StaffView from "./Components/Staff/View";
 import Category from "./Components/Category";
 import Products from "./Components/Products";
+import Orders from "./Components/Orders";
 import Content from "./Components/Content";
 import FAQs from "./Components/FAQs";
 import FaqAddEdit from "./Components/FAQs/AddEdit";
+import Coupons from "./Components/Coupons";
 import Testimonials from "./Components/Testimonials";
-
+import NotFound from "./Components/Common/NotFound";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
@@ -21,13 +23,10 @@ const ProtectedRoute = ({ children }) => {
   return token ? children : <Navigate to="/" replace />;
 };
 
-
 export default function App() {
   return (
     <BrowserRouter>
-
       <Routes>
-
         <Route path="/" element={<LoginForm />} />
 
         <Route
@@ -47,25 +46,33 @@ export default function App() {
             </ProtectedRoute>
           }
         >
-
           <Route index element={<Dashboard />} />
+          <Route path="orders" element={<Orders />} />
+          <Route path="coupons" element={<Coupons />} />
           <Route path="staff" element={<Staff />} />
           <Route path="staff/add" element={<StaffAddEdit />} />
           <Route path="staff/edit/:id" element={<StaffAddEdit />} />
           <Route path="staff/view/:id" element={<StaffView />} />
           <Route path="categories" element={<Category />} />
-          <Route path="products" element={<Products />} />
+          <Route path="products" element={<NotFound backTo="/dashboard" backLabel="Back to Dashboard" />} />
+          <Route path="settings" element={<NotFound backTo="/dashboard" backLabel="Back to Dashboard" />} />
+          <Route path="customers" element={<NotFound backTo="/dashboard" backLabel="Back to Dashboard" />} />
           <Route path="content" element={<Content />} />
           <Route path="faqs" element={<FAQs />} />
           <Route path="faqs/add" element={<FaqAddEdit />} />
           <Route path="faqs/edit/:id" element={<FaqAddEdit />} />
           <Route path="testimonials" element={<Testimonials />} />
-
+          <Route path="*" element={<NotFound backTo="/dashboard" backLabel="Back to Dashboard" />} />
         </Route>
 
         <Route
           path="/staff"
           element={<Navigate to="/dashboard/staff" replace />}
+        />
+
+        <Route
+          path="/coupons"
+          element={<Navigate to="/dashboard/coupons" replace />}
         />
 
         <Route
@@ -80,17 +87,17 @@ export default function App() {
 
         <Route
           path="/orders"
-          element={<Navigate to="/dashboard" replace />}
+          element={<Navigate to="/dashboard/orders" replace />}
         />
 
         <Route
           path="/customers"
-          element={<Navigate to="/dashboard" replace />}
+          element={<Navigate to="/dashboard/customers" replace />}
         />
 
         <Route
           path="/settings"
-          element={<Navigate to="/dashboard" replace />}
+          element={<Navigate to="/dashboard/settings" replace />}
         />
 
         <Route path="/terms-conditions" element={<Navigate to="/dashboard/content" replace />} />
@@ -99,7 +106,7 @@ export default function App() {
         
         <Route
           path="*"
-          element={<Navigate to="/" replace />}
+          element={<NotFound backTo="/" backLabel="Back to Login" />}
         />
       </Routes>
     </BrowserRouter>

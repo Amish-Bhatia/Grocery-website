@@ -45,8 +45,16 @@ const orderSchema = new mongoose.Schema(
     },
     paymentMethod: {
       type: String,
-      enum: ["COD", "Credit/Debit Card", "PayPal"],
       default: "COD",
+    },
+    paymentStatus: {
+      type: String,
+      enum: ["pending", "paid", "failed"],
+      default: "pending",
+    },
+    paymentDetails: {
+      type: Object,
+      default: {},
     },
     shippingAddress: {
       type: Object,
@@ -56,6 +64,14 @@ const orderSchema = new mongoose.Schema(
     subtotal: {
       type: Number,
       required: true,
+    },
+    discount: {
+      type: Number,
+      default: 0,
+    },
+    couponCode: {
+      type: String,
+      default: "",
     },
     shipping: {
       type: Number,

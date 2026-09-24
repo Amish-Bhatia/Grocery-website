@@ -14,6 +14,8 @@ import {
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import PageBanner from "../Components/PageBanner";
+import ProductCard from "../Components/Home/ProductCard";
+import { figmaDefaultProducts, getProductPricing } from "../Components/Home/constants";
 import apimethods from "../services/api";
 
 export default function ProductDetail() {
@@ -27,6 +29,7 @@ export default function ProductDetail() {
   const [error, setError] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [addedToCart, setAddedToCart] = useState(false);
+  const [relatedProducts, setRelatedProducts] = useState([]);
 
   useEffect(() => {
     setLoading(true);
@@ -42,22 +45,32 @@ export default function ProductDetail() {
       })
       .catch(() => setError("Could not load product. Please try again."))
       .finally(() => setLoading(false));
+
+    apimethods
+      .getApi("/get-products")
+      .then((data) => {
+        if (data?.products && Array.isArray(data.products) && data.products.length > 0) {
+          const others = data.products.filter((p) => (p._id || p.id) !== id);
+          setRelatedProducts(others.slice(0, 5));
+        } else {
+          setRelatedProducts(figmaDefaultProducts.filter((p) => p._id !== id).slice(0, 5));
+        }
+      })
+      .catch(() => {
+        setRelatedProducts(figmaDefaultProducts.filter((p) => p._id !== id).slice(0, 5));
+      });
   }, [id]);
+
+  const pricing = getProductPricing(product);
+  const onSale = pricing.onSale;
+  const salePercent = pricing.salePercent;
 
   const handleAddToCart = () => {
     if (!product) return;
-    addToCart(product, quantity);
+    addToCart({ ...product, price: pricing.price, originalPrice: pricing.originalPrice }, quantity);
     setAddedToCart(true);
     setTimeout(() => setAddedToCart(false), 2000);
   };
-
-  // Calculate sale percentage if both prices exist
-  const salePercent =
-    product?.originalPrice && product?.price < product?.originalPrice
-      ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
-      : product?.discount || 0;
-
-  const onSale = salePercent > 0;
 
   // ---- Loading State ----
   if (loading) {
@@ -177,11 +190,11 @@ export default function ProductDetail() {
             {/* Price */}
             <div className="flex items-center gap-4 mb-5">
               <span className="text-3xl font-bold text-[#00B207]">
-                ${Number(product.price).toFixed(2)}
+                ${pricing.price.toFixed(2)}
               </span>
-              {product.originalPrice && product.originalPrice > product.price && (
+              {pricing.originalPrice && pricing.originalPrice > pricing.price && (
                 <span className="text-lg text-gray-400 line-through">
-                  ${Number(product.originalPrice).toFixed(2)}
+                  ${pricing.originalPrice.toFixed(2)}
                 </span>
               )}
               {onSale && (
@@ -292,6 +305,33 @@ export default function ProductDetail() {
             </Link>
           </div>
         </div>
+
+        {/* Related Products */}
+        {relatedProducts.length > 0 && (
+          <div className="mt-16 pt-10 border-t border-gray-100">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Related Products</h2>
+              <Link
+                to="/shop"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#00B207] hover:underline"
+              >
+                <span>View All</span>
+                <ChevronRight size={16} />
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {relatedProducts.map((relProd, index) => (
+                <ProductCard
+                  key={relProd._id || index}
+                  product={relProd}
+                  onAddToCart={(p, q) => addToCart(p, q)}
+                  isWishlisted={isWishlisted}
+                  toggleWishlist={toggleWishlist}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

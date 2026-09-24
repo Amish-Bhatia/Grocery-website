@@ -3,6 +3,15 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 const CartContext = createContext(null);
 
 const STORAGE_KEY = "grocery_customer_cart";
+const COUPON_STORAGE_KEY = "grocery_customer_coupon";
+
+const VALID_COUPONS = {
+  SAVE10: 10,
+  ECOBAZAR: 10,
+  SAVE20: 20,
+  WELCOME15: 15,
+  FRESH50: 50,
+};
 
 const initialCart = [
   {
@@ -33,6 +42,15 @@ export const CartProvider = ({ children }) => {
     }
   });
 
+  const [appliedCoupon, setAppliedCoupon] = useState(() => {
+    try {
+      const saved = localStorage.getItem(COUPON_STORAGE_KEY);
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(cartItems));
@@ -40,6 +58,18 @@ export const CartProvider = ({ children }) => {
       console.error("Failed to save cart to localStorage", e);
     }
   }, [cartItems]);
+
+  useEffect(() => {
+    try {
+      if (appliedCoupon) {
+        localStorage.setItem(COUPON_STORAGE_KEY, JSON.stringify(appliedCoupon));
+      } else {
+        localStorage.removeItem(COUPON_STORAGE_KEY);
+      }
+    } catch (e) {
+      console.error("Failed to save coupon to localStorage", e);
+    }
+  }, [appliedCoupon]);
 
   const addToCart = (product, quantity = 1) => {
     const prodId = product.id || product._id;
@@ -121,6 +151,97 @@ export const CartProvider = ({ children }) => {
 
   const clearCart = () => {
     setCartItems([]);
+    setAppliedCoupon(null);
+  };
+
+  const applyCoupon = async (rawCode) => {
+    if (!rawCode || !rawCode.trim()) {
+      return { success: false, message: "Please enter a coupon code." };
+    }
+    const code = rawCode.trim().toUpperCase();
+
+    // Try backend verification first
+    try {
+      const user = JSON.parse(localStorage.getItem("userData") || "{}");
+      const userId = user._id || user.id || null;
+
+      const response = await fetch("http://localhost:3000/verifycoupon", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(localStorage.getItem("userToken") ? { Authorization: `Bearer ${localStorage.getItem("userToken")}` } : {}),
+        },
+        body: JSON.stringify({
+          code,
+          cartTotal,
+          userId,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.coupon) {
+        const couponObj = {
+          code: data.coupon.code,
+          discountType: data.coupon.discountType || "percentage",
+          discountValue: Number(data.coupon.discountValue || 0),
+          discountPercent: data.discountPercent || (data.coupon.discountType === "percentage" ? data.coupon.discountValue : 0),
+          discountAmount: data.discountAmount,
+          description: data.coupon.description,
+        };
+        setAppliedCoupon(couponObj);
+        return {
+          success: true,
+          discountPercent: couponObj.discountPercent,
+          discountAmount: data.discountAmount,
+          message: data.message || `Coupon "${code}" applied successfully!`,
+        };
+      } else if (data && data.message) {
+        return {
+          success: false,
+          message: data.message,
+        };
+      }
+    } catch (e) {
+      console.warn("Backend coupon verification unavailable, using fallback list:", e);
+    }
+
+    // Fallback to static coupon codes if backend is unreachable
+    let discountPercent = VALID_COUPONS[code];
+
+    if (!discountPercent && code.startsWith("SAVE")) {
+      const match = code.match(/^SAVE(\d{1,2})$/);
+      if (match) {
+        const val = parseInt(match[1], 10);
+        if (val > 0 && val <= 70) {
+          discountPercent = val;
+        }
+      }
+    }
+
+    if (discountPercent) {
+      const couponObj = {
+        code,
+        discountType: "percentage",
+        discountValue: discountPercent,
+        discountPercent,
+      };
+      setAppliedCoupon(couponObj);
+      return {
+        success: true,
+        discountPercent,
+        message: `Coupon "${code}" applied! You got ${discountPercent}% discount.`,
+      };
+    }
+
+    return {
+      success: false,
+      message: `"${code}" is an invalid or expired coupon code!`,
+    };
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
   };
 
   // Total number of individual items (sum of all quantities)
@@ -130,6 +251,18 @@ export const CartProvider = ({ children }) => {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+
+  const discountAmount = appliedCoupon
+    ? appliedCoupon.discountType === "fixed"
+      ? Math.min(cartTotal, Number(appliedCoupon.discountValue || 0))
+      : Number(((cartTotal * (appliedCoupon.discountPercent || appliedCoupon.discountValue || 0)) / 100).toFixed(2))
+    : 0;
+
+  const discountPercent = appliedCoupon
+    ? appliedCoupon.discountPercent || (cartTotal > 0 ? Math.round((discountAmount / cartTotal) * 100) : 0)
+    : 0;
+
+  const cartFinalTotal = Number(Math.max(0, cartTotal - discountAmount).toFixed(2));
 
   return (
     <CartContext.Provider
@@ -141,6 +274,12 @@ export const CartProvider = ({ children }) => {
         clearCart,
         cartCount,
         cartTotal,
+        appliedCoupon,
+        applyCoupon,
+        removeCoupon,
+        discountPercent,
+        discountAmount,
+        cartFinalTotal,
       }}
     >
       {children}

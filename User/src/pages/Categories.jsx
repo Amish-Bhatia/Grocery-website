@@ -64,7 +64,7 @@ export default function Categories() {
                 <div className="w-20 h-20 mb-3 flex items-center justify-center overflow-hidden">
                   {/* =========================================================
                      IMAGE PLACEHOLDER
-                     Required i                                                                                                                                                       ry image for "{category.name}"
+                     Required image: Category image for "{category.name}"
                      Upload the category image via the admin panel.
                      The image URL comes from category.image (fetched from backend).
                      ========================================================= */}

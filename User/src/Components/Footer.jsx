@@ -46,12 +46,12 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2.5 text-sm text-gray-400">
               <li>
-                <Link to="/login" className="hover:text-white transition">
+                <Link to="/account/dashboard" className="hover:text-white transition">
                   My Account
                 </Link>
               </li>
               <li>
-                <Link to="/cart" className="hover:text-white transition">
+                <Link to="/account/order-history" className="hover:text-white transition">
                   Order History
                 </Link>
               </li>
@@ -119,7 +119,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/cart" className="hover:text-white transition">
+                <Link to="/account/order-history" className="hover:text-white transition">
                   Track Order
                 </Link>
               </li>

@@ -15,6 +15,13 @@ import Categories from './pages/Categories.jsx'
 import Wishlist from './pages/Wishlist.jsx'
 import Checkout from './pages/Checkout.jsx'
 import FAQs from './pages/FAQs.jsx'
+import Dashboard from './pages/Dashboard.jsx'
+import OrderHistory from './pages/OrderHistory.jsx'
+import OrderDetail from './pages/OrderDetail.jsx'
+import AccountSettings from './pages/AccountSettings.jsx'
+import ForgotPassword from './pages/ForgotPassword.jsx'
+import ResetPassword from './pages/ResetPassword.jsx'
+import NotFound from './pages/NotFound.jsx'
 
 function App() {
   return (
@@ -29,6 +36,18 @@ function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/change" element={<ResetPassword />} />
+          <Route path="/account" element={<Dashboard />} />
+          <Route path="/account/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/account/order-history" element={<OrderHistory />} />
+          <Route path="/order-history" element={<OrderHistory />} />
+          <Route path="/account/order/:id" element={<OrderDetail />} />
+          <Route path="/order/:id" element={<OrderDetail />} />
+          <Route path="/account/settings" element={<AccountSettings />} />
+          <Route path="/settings" element={<AccountSettings />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/terms" element={<Terms />} />
@@ -37,6 +56,7 @@ function App() {
           <Route path="/categories" element={<Categories />} />
           <Route path="/faqs" element={<FAQs />} />
           <Route path="/faq" element={<FAQs />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       <Footer />

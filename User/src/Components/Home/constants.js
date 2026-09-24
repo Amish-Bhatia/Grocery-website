@@ -50,7 +50,7 @@ export const categoryOrder = [
 // Fallback Figma data to ensure all 12 categories render seamlessly
 export const figmaCategories = [
   { name: "Fresh Fruit", image: "/categories/1788851171610-266493087.png" },
-  { name: "Fresh Vegetables", image: "/categories/1788941762355-972498302.png", active: true },
+  { name: "Fresh Vegetables", image: "/categories/1788941762355-972498302.png" },
   { name: "Meat & Fish", image: "/categories/1788941780756-586862599.png" },
   { name: "Snacks", image: "/categories/snacks.png" },
   { name: "Beverages", image: "/categories/1789543346593-215389198.png" },
@@ -83,7 +83,7 @@ export const figmaProductOrder = [
 export const figmaDefaultProducts = [
   { _id: "f1", name: "Green Apple", price: 14.99, originalPrice: 20.99, discount: 50, rating: 4, image: "/greenApple.png" },
   { _id: "f2", name: "Fresh Indian Malta", price: 20.00, originalPrice: null, discount: 0, rating: 5, image: "/orange.png" },
-  { _id: "f3", name: "Chinese cabbage", price: 12.00, originalPrice: 24.00, discount: 50, rating: 5, image: "/ChineseCabbage.png", active: true },
+  { _id: "f3", name: "Chinese cabbage", price: 12.00, originalPrice: 24.00, discount: 50, rating: 5, image: "/ChineseCabbage.png" },
   { _id: "f4", name: "Green lettuce", price: 9.00, originalPrice: null, discount: 0, rating: 4, image: "/GreenLettuce.png" },
   { _id: "f5", name: "Eggplant", price: 34.00, originalPrice: null, discount: 0, rating: 5, image: "/EggPlant.png" },
   { _id: "f6", name: "Big Potatoes", price: 20.00, originalPrice: null, discount: 0, rating: 4, image: "/potato.png" },
@@ -160,4 +160,53 @@ export const getProductImageUrl = (product) => {
   }
   const clean = product.name?.toLowerCase().trim();
   return localProductMap[clean] || "";
+};
+
+// Universal pricing helper that ensures selling price, strikethrough price, and discount % are always accurate
+export const getProductPricing = (product) => {
+  if (!product) {
+    return { price: 0, originalPrice: null, discount: 0, onSale: false, salePercent: 0 };
+  }
+
+  const rawPrice = Number(product.price) || 0;
+  const rawOriginalPrice = product.originalPrice ? Number(product.originalPrice) : null;
+  const discount = Number(product.discount) || 0;
+
+  // Case 1: Product has an explicit discount % from admin (1 - 99%)
+  if (discount > 0 && discount < 100) {
+    const basePrice = (rawOriginalPrice && rawOriginalPrice > rawPrice)
+      ? rawOriginalPrice
+      : rawPrice;
+
+    const sellingPrice = Number((basePrice * (1 - discount / 100)).toFixed(2));
+
+    return {
+      price: sellingPrice,
+      originalPrice: basePrice,
+      discount,
+      onSale: true,
+      salePercent: discount,
+    };
+  }
+
+  // Case 2: No explicit discount %, but originalPrice > price
+  if (rawOriginalPrice && rawOriginalPrice > rawPrice) {
+    const calculatedDiscount = Math.round(((rawOriginalPrice - rawPrice) / rawOriginalPrice) * 100);
+    return {
+      price: rawPrice,
+      originalPrice: rawOriginalPrice,
+      discount: calculatedDiscount,
+      onSale: true,
+      salePercent: calculatedDiscount,
+    };
+  }
+
+  // Case 3: No discount
+  return {
+    price: rawPrice,
+    originalPrice: null,
+    discount: 0,
+    onSale: false,
+    salePercent: 0,
+  };
 };

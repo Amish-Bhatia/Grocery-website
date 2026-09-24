@@ -20,6 +20,14 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("userData", JSON.stringify(userData));
   };
 
+  const updateUser = (updatedData) => {
+    setUser((prev) => {
+      const merged = { ...prev, ...updatedData };
+      localStorage.setItem("userData", JSON.stringify(merged));
+      return merged;
+    });
+  };
+
   const logout = () => {
     setUser(null);
     setToken(null);
@@ -34,6 +42,7 @@ export const AuthProvider = ({ children }) => {
         token,
         isLoggedIn: !!token,
         login,
+        updateUser,
         logout,
       }}
     >

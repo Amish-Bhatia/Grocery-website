@@ -10,7 +10,6 @@ import {
   figmaProductOrder,
   figmaDefaultProducts,
   defaultClientTestimonials,
-  dealTime,
   monthSaleTime,
   getProductImageUrl,
 } from "../Components/Home/constants";
@@ -36,7 +35,6 @@ export default function Home() {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
-  const [hoveredDealId, setHoveredDealId] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const handleAddToCartWithFeedback = (product, quantity = 1) => {
@@ -171,12 +169,9 @@ export default function Home() {
 
         <HotDealsSection
           products={displayProducts}
-          hoveredDealId={hoveredDealId}
-          setHoveredDealId={setHoveredDealId}
           onAddToCart={handleAddToCartWithFeedback}
           isWishlisted={isWishlisted}
           toggleWishlist={toggleWishlist}
-          dealTime={dealTime}
         />
 
         <WideSummerSaleBanner />

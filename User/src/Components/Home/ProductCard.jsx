@@ -1,26 +1,18 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Heart, Eye, ShoppingBag, Star } from "lucide-react";
-import { localProductMap, getProductImageUrl } from "./constants";
+import { localProductMap, getProductImageUrl, getProductPricing } from "./constants";
 
 export default function ProductCard({
   product,
-  isSelected = false,
   onAddToCart,
   isWishlisted,
   toggleWishlist,
 }) {
   const navigate = useNavigate();
-  const onSale =
-    (product.discount && product.discount > 0) ||
-    (product.originalPrice && product.originalPrice > product.price);
-
-  const salePercent =
-    product.discount > 0
-      ? product.discount
-      : product.originalPrice > product.price
-      ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
-      : null;
+  const pricing = getProductPricing(product);
+  const onSale = pricing.onSale;
+  const salePercent = pricing.salePercent;
 
   const wishlisted = isWishlisted ? isWishlisted(product._id) : false;
   const dynamicRating =
@@ -32,11 +24,7 @@ export default function ProductCard({
 
   return (
     <div
-      className={`group relative bg-white rounded-lg p-3 sm:p-4 border transition-all duration-200 flex flex-col justify-between ${
-        isSelected || product.active
-          ? "border-[#00B207] shadow-sm"
-          : "border-gray-100 hover:border-[#00B207] hover:shadow-md"
-      }`}
+      className="group relative bg-white rounded-lg p-3 sm:p-4 border border-gray-100 hover:border-[#00B207] hover:shadow-md transition-all duration-200 flex flex-col justify-between"
     >
       {/* Top Badges & Actions */}
       <div className="flex items-center justify-between w-full mb-1">
@@ -117,11 +105,11 @@ export default function ProductCard({
 
         <div className="flex items-center gap-1.5 mb-1.5">
           <span className="text-sm sm:text-base font-semibold text-gray-900">
-            ${Number(product.price).toFixed(2)}
+            ${pricing.price.toFixed(2)}
           </span>
-          {product.originalPrice && product.originalPrice > product.price && (
+          {pricing.originalPrice && pricing.originalPrice > pricing.price && (
             <span className="text-xs text-gray-400 line-through">
-              ${Number(product.originalPrice).toFixed(2)}
+              ${pricing.originalPrice.toFixed(2)}
             </span>
           )}
         </div>
@@ -142,13 +130,9 @@ export default function ProductCard({
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              onAddToCart(product, 1);
+              onAddToCart({ ...product, price: pricing.price, originalPrice: pricing.originalPrice }, 1);
             }}
-            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer ${
-              isSelected || product.active
-                ? "bg-[#00B207] text-white"
-                : "bg-gray-100 hover:bg-[#00B207] text-gray-700 hover:text-white"
-            }`}
+            className="w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer bg-gray-100 group-hover:bg-[#00B207] text-gray-700 group-hover:text-white hover:!bg-[#009606]"
             title="Add to Cart"
           >
             <ShoppingBag size={15} />

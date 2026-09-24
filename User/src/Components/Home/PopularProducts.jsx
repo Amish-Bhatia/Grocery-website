@@ -37,7 +37,6 @@ export default function PopularProducts({
             <ProductCard
               key={product._id || index}
               product={product}
-              isSelected={index === 2}
               onAddToCart={onAddToCart}
               isWishlisted={isWishlisted}
               toggleWishlist={toggleWishlist}

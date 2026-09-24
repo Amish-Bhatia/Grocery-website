@@ -28,8 +28,14 @@ export default function ProductTable({ products, getStockLabel, onView, onEdit, 
                     <span className="text-sm font-medium text-slate-800">{product.name}</span>
                   </div>
                 </td>
-                <td className="px-5 py-4 text-sm text-slate-600">{product.category || "Uncategorized"}</td>
-                <td className="px-5 py-4 text-sm font-medium text-slate-800">${Number(product.price).toFixed(2)}</td>
+                <td className="px-5 py-4 text-sm font-medium text-slate-800">
+                  ${Number(product.price).toFixed(2)}
+                  {product.originalPrice && product.originalPrice > product.price && (
+                    <span className="ml-1.5 text-xs text-slate-400 line-through">
+                      ${Number(product.originalPrice).toFixed(2)}
+                    </span>
+                  )}
+                </td>
                 <td className="px-5 py-4 text-sm text-slate-600">{product.discount ? `${product.discount}%` : "-"}</td>
                 <td className="px-5 py-4"><span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${stock.className}`}>{stock.label}</span></td>
                 <td className="px-5 py-4">

@@ -1,17 +1,12 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import HotDealCard from "./HotDealCard";
-import { dealTime as defaultDealTime } from "./constants";
+import ProductCard from "./ProductCard";
 
 export default function HotDealsSection({
   products = [],
-  hoveredDealId,
-  setHoveredDealId,
   onAddToCart,
   isWishlisted,
   toggleWishlist,
-  dealTime = defaultDealTime,
 }) {
   return (
     <section className="mb-14">
@@ -29,17 +24,13 @@ export default function HotDealsSection({
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        {products.map((product) => (
-          <HotDealCard
-            key={product._id}
+        {products.slice(0, 5).map((product, index) => (
+          <ProductCard
+            key={product._id || index}
             product={product}
-            isHovered={hoveredDealId === product._id}
-            onMouseEnter={() => setHoveredDealId(product._id)}
-            onMouseLeave={() => setHoveredDealId(null)}
             onAddToCart={onAddToCart}
             isWishlisted={isWishlisted}
             toggleWishlist={toggleWishlist}
-            dealTime={dealTime}
           />
         ))}
       </div>
