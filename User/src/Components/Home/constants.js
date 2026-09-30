@@ -163,29 +163,30 @@ export const getProductImageUrl = (product) => {
 };
 
 // Universal pricing helper that ensures selling price, strikethrough price, and discount % are always accurate
-export const getProductPricing = (product) => {
+export const getProductPricing = (product, saleDiscount = 0) => {
   if (!product) {
     return { price: 0, originalPrice: null, discount: 0, onSale: false, salePercent: 0 };
   }
 
   const rawPrice = Number(product.price) || 0;
   const rawOriginalPrice = product.originalPrice ? Number(product.originalPrice) : null;
-  const discount = Number(product.discount) || 0;
+  const productDiscount = Number(product.discount) || 0;
+  const effectiveDiscount = Math.max(productDiscount, Number(saleDiscount) || 0);
 
-  // Case 1: Product has an explicit discount % from admin (1 - 99%)
-  if (discount > 0 && discount < 100) {
+  // Case 1: Product has an explicit discount % (1 - 99%) from product or live sale campaign
+  if (effectiveDiscount > 0 && effectiveDiscount < 100) {
     const basePrice = (rawOriginalPrice && rawOriginalPrice > rawPrice)
       ? rawOriginalPrice
       : rawPrice;
 
-    const sellingPrice = Number((basePrice * (1 - discount / 100)).toFixed(2));
+    const sellingPrice = Number((basePrice * (1 - effectiveDiscount / 100)).toFixed(2));
 
     return {
       price: sellingPrice,
       originalPrice: basePrice,
-      discount,
+      discount: effectiveDiscount,
       onSale: true,
-      salePercent: discount,
+      salePercent: effectiveDiscount,
     };
   }
 

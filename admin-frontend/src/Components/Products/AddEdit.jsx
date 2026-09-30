@@ -69,13 +69,13 @@ export default function AddEdit({ product, categories, onSave, onClose }) {
 				<div className="grid gap-5 p-6 sm:grid-cols-2 lg:grid-cols-4">
 					<div className="sm:col-span-2"><label htmlFor="product-name" className="mb-2 block text-sm font-medium text-slate-700">Product name</label><input id="product-name" name="name" value={formData.name} onChange={handleChange} placeholder="e.g. Organic Bananas" required className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100" /></div>
 					<div><label htmlFor="product-category" className="mb-2 block text-sm font-medium text-slate-700">Category</label><select id="product-category" name="category" value={formData.category} onChange={handleChange} required className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"><option value="">Select category</option>{categories.map((category) => <option key={category._id || category.name} value={category.name}>{category.name}</option>)}</select></div>
-					<div><label htmlFor="product-price" className="mb-2 block text-sm font-medium text-slate-700">Price ($)</label><input id="product-price" name="price" type="number" min="0" step="0.01" value={formData.price} onChange={handleChange} placeholder="0.00" required className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100" /></div>
+					<div><label htmlFor="product-price" className="mb-2 block text-sm font-medium text-slate-700">Price (₹)</label><input id="product-price" name="price" type="number" min="0" step="0.01" value={formData.price} onChange={handleChange} placeholder="0.00" required className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100" /></div>
 					<div>
 						<label htmlFor="product-discount" className="mb-2 block text-sm font-medium text-slate-700">Discount (%)</label>
 						<input id="product-discount" name="discount" type="number" min="0" max="100" step="1" value={formData.discount} onChange={handleChange} placeholder="0" className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100" />
 						{formData.price && Number(formData.discount) > 0 && (
 							<p className="mt-1.5 text-xs font-semibold text-emerald-600">
-								Selling Price: ${(Number(formData.price) * (1 - Number(formData.discount) / 100)).toFixed(2)}
+								Selling Price: ₹{(Number(formData.price) * (1 - Number(formData.discount) / 100)).toFixed(2)}
 							</p>
 						)}
 					</div>

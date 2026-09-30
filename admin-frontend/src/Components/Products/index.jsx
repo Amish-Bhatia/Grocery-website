@@ -31,7 +31,7 @@ export default function Products() {
   const loadProducts = async () => {
     try {
       const data = await apimethods.getApi("/get-products");
-      if (data && Array.isArray(data.products) && data.products.length > 0) {
+      if (data && Array.isArray(data.products)) {
         const formatted = data.products.map(p => ({ ...p, id: p._id || p.id }));
         setProducts(formatted);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(formatted));

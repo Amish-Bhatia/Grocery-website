@@ -9,7 +9,7 @@ import {
   HelpCircle,
   MessageSquare,
   ArrowRight,
-  DollarSign,
+  IndianRupee,
   RefreshCw,
   FileText,
 } from "lucide-react";
@@ -82,9 +82,9 @@ export default function Dashboard() {
     },
     {
       label: "Total Revenue",
-      value: `$${Number(stats.totalRevenue || 0).toFixed(2)}`,
+      value: `₹${Number(stats.totalRevenue || 0).toFixed(2)}`,
       description: "Gross revenue from orders",
-      icon: DollarSign,
+      icon: IndianRupee,
       path: "/dashboard/orders",
     },
     {

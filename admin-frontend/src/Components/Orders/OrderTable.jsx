@@ -1,4 +1,5 @@
 import { RefreshCw, Eye, CheckCircle, Clock, Truck, XCircle, Package } from "lucide-react";
+import Swal from "sweetalert2";
 
 export const getStatusBadge = (status) => {
   const s = String(status || "pending").toLowerCase();
@@ -44,6 +45,46 @@ export default function OrderTable({
   onStatusChange,
   onSelectOrder,
 }) {
+  const handleSelectStatus = (order, newStatus) => {
+    const isCOD = String(order.paymentMethod || "").toUpperCase() === "COD";
+
+    // If order is COD and status is changing to "delivered"
+    if (newStatus === "delivered" && isCOD) {
+      Swal.fire({
+        title: "COD Payment Verification",
+        html: `
+          <div style="text-align: left; font-size: 13px; color: #334155; line-height: 1.6;">
+            <p><strong>Order ID:</strong> #${String(order._id).slice(-6).toUpperCase()}</p>
+            <p><strong>Customer:</strong> ${order.userName || order.customerName || "Customer"}</p>
+            <p><strong>Amount to Collect:</strong> <span style="color: #019D3E; font-weight: 700; font-size: 15px;">₹${Number(order.total || 0).toFixed(2)}</span></p>
+            <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 10px 0;" />
+            <p style="font-weight: 600; color: #0f172a;">Has the cash payment been collected for this delivery?</p>
+          </div>
+        `,
+        icon: "question",
+        showCancelButton: true,
+        showDenyButton: true,
+        confirmButtonText: "✓ Yes, Payment Received",
+        denyButtonText: "✕ No, Payment Failed",
+        cancelButtonText: "Cancel",
+        confirmButtonColor: "#019D3E",
+        denyButtonColor: "#EF4444",
+        cancelButtonColor: "#94A3B8",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Payment received: mark delivered and paid
+          onStatusChange(order._id, "delivered", "paid");
+        } else if (result.isDenied) {
+          // Payment failed: mark cancelled/not delivered and payment failed
+          onStatusChange(order._id, "cancelled", "failed");
+        }
+      });
+    } else {
+      // Normal status update
+      onStatusChange(order._id, newStatus);
+    }
+  };
+
   if (loading) {
     return (
       <div className="py-12 text-center text-sm text-slate-400 flex flex-col items-center justify-center gap-2">
@@ -101,11 +142,17 @@ export default function OrderTable({
                   {itemCount} {itemCount === 1 ? "Item" : "Items"}
                 </td>
                 <td className="px-6 py-4 font-bold text-slate-900 whitespace-nowrap">
-                  ${Number(order.total || 0).toFixed(2)}
+                  ₹{Number(order.total || 0).toFixed(2)}
                 </td>
                 <td className="px-6 py-4 text-xs whitespace-nowrap">
                   <span className="font-medium text-slate-800 uppercase block">{order.paymentMethod || "COD"}</span>
-                  <span className={`text-[10px] font-semibold ${order.paymentStatus === "paid" ? "text-emerald-600" : "text-amber-600"}`}>
+                  <span className={`text-[10px] font-semibold ${
+                    order.paymentStatus === "paid" 
+                      ? "text-emerald-600" 
+                      : order.paymentStatus === "failed" 
+                      ? "text-rose-600" 
+                      : "text-amber-600"
+                  }`}>
                     {order.paymentStatus || "pending"}
                   </span>
                 </td>
@@ -114,9 +161,8 @@ export default function OrderTable({
                   <select
                     value={order.status?.toLowerCase() || "pending"}
                     disabled={isUpdating}
-                    onChange={(e) => onStatusChange(order._id, e.target.value)}
-                    className="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-800 outline-none focus:border-[#019D3E] transition cursor-pointer disabled:opacity-50"
-                  >
+                    onChange={(e) => handleSelectStatus(order, e.target.value)}
+                    className="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-800 outline-none focus:border-[#019D3E] transition cursor-pointer disabled:opacity-50">
                     <option value="pending">Pending</option>
                     <option value="processing">Processing</option>
                     <option value="on the way">On the way</option>
@@ -128,8 +174,7 @@ export default function OrderTable({
                   <button
                     type="button"
                     onClick={() => onSelectOrder(order)}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#019D3E] hover:text-[#00491B] hover:underline transition cursor-pointer"
-                  >
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#019D3E] hover:text-[#00491B] hover:underline transition cursor-pointer">
                     <Eye size={14} />
                     <span>View Details</span>
                   </button>

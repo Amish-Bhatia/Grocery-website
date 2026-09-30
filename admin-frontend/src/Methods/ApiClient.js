@@ -56,6 +56,11 @@ const apimethods = {
     body: body instanceof FormData ? body : JSON.stringify(body),
   }),
 
+  patchApi: (path, body) => request(path, {
+    method: "PATCH",
+    body: body instanceof FormData ? body : JSON.stringify(body),
+  }),
+
   deleteApi: (path) => request(path, {
     method: "DELETE",
   }),

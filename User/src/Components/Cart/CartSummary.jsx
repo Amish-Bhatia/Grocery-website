@@ -63,13 +63,13 @@ export default function CartSummary({
         <div className="space-y-3 text-sm">
           <div className="flex justify-between text-gray-600">
             <span>Subtotal:</span>
-            <span className="font-semibold text-gray-900">${cartTotal.toFixed(2)}</span>
+            <span className="font-semibold text-gray-900">₹{cartTotal.toFixed(2)}</span>
           </div>
 
           {appliedCoupon && (
             <div className="flex justify-between text-[#00B207] font-medium">
               <span>Discount ({appliedCoupon.code} - {discountPercent}%):</span>
-              <span className="font-bold">-${discountAmount.toFixed(2)}</span>
+              <span className="font-bold">-₹{discountAmount.toFixed(2)}</span>
             </div>
           )}
 
@@ -82,9 +82,9 @@ export default function CartSummary({
             <span>Total:</span>
             <div className="text-right">
               {appliedCoupon && (
-                <span className="text-xs text-gray-400 line-through block font-normal">${cartTotal.toFixed(2)}</span>
+                <span className="text-xs text-gray-400 line-through block font-normal">₹{cartTotal.toFixed(2)}</span>
               )}
-              <span className="text-lg font-bold text-gray-900">${cartFinalTotal.toFixed(2)}</span>
+              <span className="text-lg font-bold text-gray-900">₹{cartFinalTotal.toFixed(2)}</span>
             </div>
           </div>
         </div>

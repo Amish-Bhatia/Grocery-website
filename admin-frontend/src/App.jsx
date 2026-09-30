@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
+import ScrollToTop from "./Components/Common/ScrollToTop";
 import LoginForm from "./Components/Login";
 import ResetPassword from "./Components/ResetPassword";
 import DashboardLayout from "./Components/Layout/DashboardLayout";
@@ -14,6 +15,7 @@ import Content from "./Components/Content";
 import FAQs from "./Components/FAQs";
 import FaqAddEdit from "./Components/FAQs/AddEdit";
 import Coupons from "./Components/Coupons";
+import Sales from "./Components/Sales";
 import Testimonials from "./Components/Testimonials";
 import NotFound from "./Components/Common/NotFound";
 
@@ -26,6 +28,7 @@ const ProtectedRoute = ({ children }) => {
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<LoginForm />} />
 
@@ -48,13 +51,14 @@ export default function App() {
         >
           <Route index element={<Dashboard />} />
           <Route path="orders" element={<Orders />} />
+          <Route path="sales" element={<Sales />} />
           <Route path="coupons" element={<Coupons />} />
           <Route path="staff" element={<Staff />} />
           <Route path="staff/add" element={<StaffAddEdit />} />
           <Route path="staff/edit/:id" element={<StaffAddEdit />} />
           <Route path="staff/view/:id" element={<StaffView />} />
           <Route path="categories" element={<Category />} />
-          <Route path="products" element={<NotFound backTo="/dashboard" backLabel="Back to Dashboard" />} />
+          <Route path="products" element={<Products/>} />
           <Route path="settings" element={<NotFound backTo="/dashboard" backLabel="Back to Dashboard" />} />
           <Route path="customers" element={<NotFound backTo="/dashboard" backLabel="Back to Dashboard" />} />
           <Route path="content" element={<Content />} />
@@ -73,6 +77,11 @@ export default function App() {
         <Route
           path="/coupons"
           element={<Navigate to="/dashboard/coupons" replace />}
+        />
+
+        <Route
+          path="/sales"
+          element={<Navigate to="/dashboard/sales" replace />}
         />
 
         <Route

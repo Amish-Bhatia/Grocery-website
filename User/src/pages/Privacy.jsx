@@ -19,7 +19,7 @@ export default function Privacy() {
 
   return (
     <div className="w-full bg-[#FCFCFC] py-12 font-[sans-serif]">
-      <div className="w-full px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
         <div className="bg-white p-8 sm:p-12 rounded-2xl border border-gray-100 shadow-sm">
           <span className="text-xs font-bold text-[#00B207] uppercase tracking-wider block mb-2">
             Privacy &amp; Security
@@ -34,24 +34,31 @@ export default function Privacy() {
               <div className="h-4 bg-gray-100 rounded w-5/6" />
               <div className="h-4 bg-gray-100 rounded w-4/6" />
             </div>
+          ) : content ? (
+            <div
+              className="text-sm text-gray-700 leading-relaxed space-y-4 prose max-w-none"
+              dangerouslySetInnerHTML={{ __html: content }}
+            />
           ) : (
-            <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
-              {content || (
-                <>
-                  <h3 className="text-base font-bold text-gray-900 mb-2">1. Information We Collect</h3>
-                  <p className="mb-4">
-                    We collect personal information such as your name, email address, phone number, and delivery location to fulfill grocery orders.
-                  </p>
-                  <h3 className="text-base font-bold text-gray-900 mb-2">2. How We Protect Your Data</h3>
-                  <p className="mb-4">
-                    Your personal information is encrypted and securely stored. We never sell or share your personal data with third-party advertisers.
-                  </p>
-                  <h3 className="text-base font-bold text-gray-900 mb-2">3. Payment Security</h3>
-                  <p className="mb-4">
-                    All payment transactions are processed through 100% secure, PCI-compliant payment gateways.
-                  </p>
-                </>
-              )}
+            <div className="text-sm text-gray-700 leading-relaxed space-y-4">
+              <div>
+                <h3 className="text-base font-bold text-gray-900 mb-1">1. Information We Collect</h3>
+                <p>
+                  We collect personal information such as your name, email address, phone number, and delivery location to fulfill grocery orders.
+                </p>
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-gray-900 mb-1">2. How We Protect Your Data</h3>
+                <p>
+                  Your personal information is encrypted and securely stored. We never sell or share your personal data with third-party advertisers.
+                </p>
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-gray-900 mb-1">3. Payment Security</h3>
+                <p>
+                  All payment transactions are processed through 100% secure, PCI-compliant payment gateways.
+                </p>
+              </div>
             </div>
           )}
         </div>

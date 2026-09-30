@@ -54,10 +54,10 @@ export default function OrderDetailModal({ selectedOrder, onClose }) {
                     )}
                     <div>
                       <p className="font-semibold text-slate-900">{item.name}</p>
-                      <p className="text-xs text-slate-400">Qty: {item.quantity} × ${Number(item.price).toFixed(2)}</p>
+                      <p className="text-xs text-slate-400">Qty: {item.quantity} × ₹{Number(item.price).toFixed(2)}</p>
                     </div>
                   </div>
-                  <p className="font-bold text-slate-900">${(Number(item.price || 0) * Number(item.quantity || 1)).toFixed(2)}</p>
+                  <p className="font-bold text-slate-900">₹{(Number(item.price || 0) * Number(item.quantity || 1)).toFixed(2)}</p>
                 </div>
               ))}
             </div>
@@ -66,19 +66,19 @@ export default function OrderDetailModal({ selectedOrder, onClose }) {
           <div className="border-t border-slate-100 pt-4 space-y-2 text-xs">
             <div className="flex justify-between text-slate-600">
               <span>Subtotal:</span>
-              <span className="font-medium text-slate-900">${Number(selectedOrder.subtotal || selectedOrder.total).toFixed(2)}</span>
+              <span className="font-medium text-slate-900">₹{Number(selectedOrder.subtotal || selectedOrder.total).toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-slate-600">
               <span>Discount:</span>
-              <span className="font-medium text-slate-900">${Number(selectedOrder.discount || 0).toFixed(2)}</span>
+              <span className="font-medium text-slate-900">₹{Number(selectedOrder.discount || 0).toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-slate-600">
               <span>Shipping:</span>
-              <span className="font-medium text-slate-900">{selectedOrder.shipping === 0 ? "Free" : `$${selectedOrder.shipping || 0}`}</span>
+              <span className="font-medium text-slate-900">{selectedOrder.shipping === 0 ? "Free" : `₹${selectedOrder.shipping || 0}`}</span>
             </div>
             <div className="flex justify-between text-sm font-bold text-slate-900 pt-2 border-t border-slate-100">
               <span>Total Amount:</span>
-              <span className="text-[#019D3E] text-base">${Number(selectedOrder.total || 0).toFixed(2)}</span>
+              <span className="text-[#019D3E] text-base">₹{Number(selectedOrder.total || 0).toFixed(2)}</span>
             </div>
           </div>
         </div>

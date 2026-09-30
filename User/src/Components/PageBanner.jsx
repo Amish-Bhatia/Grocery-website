@@ -10,7 +10,7 @@ export default function PageBanner({ title, breadcrumbs = [], showBack = false }
       className="relative w-full py-8 sm:py-10 bg-cover bg-center border-b border-gray-900/60"
       style={{
         backgroundImage:
-          "linear-gradient(to right, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.45) 50%, rgba(0, 0, 0, 0.3) 100%), url('/account-banner.jpg')",
+          "linear-gradient(to right, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.45) 50%, rgba(0, 0, 0, 0.3) 100%), url('/breadcrums.jpg')",
         backgroundPosition: "center 30%",
       }}
     >
@@ -33,8 +33,7 @@ export default function PageBanner({ title, breadcrumbs = [], showBack = false }
                 {crumb.path && !isLast ? (
                   <Link
                     to={crumb.path}
-                    className="hover:text-white transition-colors font-normal text-gray-300"
-                  >
+                    className="hover:text-white transition-colors font-normal text-gray-300">
                     {crumb.label}
                   </Link>
                 ) : (

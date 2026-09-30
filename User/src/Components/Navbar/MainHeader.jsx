@@ -101,7 +101,7 @@ export default function MainHeader({
               </div>
               <div className="hidden lg:flex flex-col text-left leading-tight">
                 <span className="text-[11px] text-gray-500 font-normal">Shopping cart:</span>
-                <span className="text-sm text-[#1A1A1A] font-semibold">${cartTotal.toFixed(2)}</span>
+                <span className="text-sm text-[#1A1A1A] font-semibold">₹{cartTotal.toFixed(2)}</span>
               </div>
             </button>
           </div>

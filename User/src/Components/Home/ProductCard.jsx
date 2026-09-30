@@ -2,15 +2,19 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Heart, Eye, ShoppingBag, Star } from "lucide-react";
 import { localProductMap, getProductImageUrl, getProductPricing } from "./constants";
+import { useSales } from "../../context/SalesContext";
 
 export default function ProductCard({
   product,
   onAddToCart,
   isWishlisted,
   toggleWishlist,
+  onQuickView,
 }) {
   const navigate = useNavigate();
-  const pricing = getProductPricing(product);
+  const { getProductSaleDiscount } = useSales();
+  const saleDiscount = getProductSaleDiscount ? getProductSaleDiscount(product) : 0;
+  const pricing = getProductPricing(product, saleDiscount);
   const onSale = pricing.onSale;
   const salePercent = pricing.salePercent;
 
@@ -57,9 +61,10 @@ export default function ProductCard({
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              navigate(`/product/${product._id}`);
+              if (onQuickView) onQuickView(product);
+              else navigate(`/product/${product._id}`);
             }}
-            className="w-7 h-7 rounded-full bg-gray-50 hover:bg-[#00B207] hover:text-white text-gray-600 flex items-center justify-center transition shadow-sm"
+            className="w-7 h-7 rounded-full bg-gray-50 hover:bg-[#00B207] hover:text-white text-gray-600 flex items-center justify-center transition shadow-sm cursor-pointer"
             title="Quick View"
           >
             <Eye size={14} />
@@ -105,11 +110,11 @@ export default function ProductCard({
 
         <div className="flex items-center gap-1.5 mb-1.5">
           <span className="text-sm sm:text-base font-semibold text-gray-900">
-            ${pricing.price.toFixed(2)}
+            ₹{pricing.price.toFixed(2)}
           </span>
           {pricing.originalPrice && pricing.originalPrice > pricing.price && (
             <span className="text-xs text-gray-400 line-through">
-              ${pricing.originalPrice.toFixed(2)}
+              ₹{pricing.originalPrice.toFixed(2)}
             </span>
           )}
         </div>

@@ -19,7 +19,7 @@ export default function Terms() {
 
   return (
     <div className="w-full bg-[#FCFCFC] py-12 font-[sans-serif]">
-      <div className="w-full px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
         <div className="bg-white p-8 sm:p-12 rounded-2xl border border-gray-100 shadow-sm">
           <span className="text-xs font-bold text-[#00B207] uppercase tracking-wider block mb-2">
             Legal &amp; Policy
@@ -34,24 +34,31 @@ export default function Terms() {
               <div className="h-4 bg-gray-100 rounded w-5/6" />
               <div className="h-4 bg-gray-100 rounded w-4/6" />
             </div>
+          ) : content ? (
+            <div
+              className="text-sm text-gray-700 leading-relaxed space-y-4 prose max-w-none"
+              dangerouslySetInnerHTML={{ __html: content }}
+            />
           ) : (
-            <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
-              {content || (
-                <>
-                  <h3 className="text-base font-bold text-gray-900 mb-2">1. Acceptance of Terms</h3>
-                  <p className="mb-4">
-                    By accessing and using Ecobazar grocery delivery services, you agree to comply with and be bound by these terms and conditions.
-                  </p>
-                  <h3 className="text-base font-bold text-gray-900 mb-2">2. Quality &amp; Organic Guarantee</h3>
-                  <p className="mb-4">
-                    All fresh products sold on Ecobazar are sourced with high standards of food safety, hygiene, and fresh organic farming practices.
-                  </p>
-                  <h3 className="text-base font-bold text-gray-900 mb-2">3. Orders &amp; Delivery</h3>
-                  <p className="mb-4">
-                    Deliveries are scheduled to the shipping address provided at checkout. Please ensure accurate contact details for smooth delivery.
-                  </p>
-                </>
-              )}
+            <div className="text-sm text-gray-700 leading-relaxed space-y-4">
+              <div>
+                <h3 className="text-base font-bold text-gray-900 mb-1">1. Acceptance of Terms</h3>
+                <p>
+                  By accessing and using Ecobazar grocery delivery services, you agree to comply with and be bound by these terms and conditions.
+                </p>
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-gray-900 mb-1">2. Quality &amp; Organic Guarantee</h3>
+                <p>
+                  All fresh products sold on Ecobazar are sourced with high standards of food safety, hygiene, and fresh organic farming practices.
+                </p>
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-gray-900 mb-1">3. Orders &amp; Delivery</h3>
+                <p>
+                  Deliveries are scheduled to the shipping address provided at checkout. Please ensure accurate contact details for smooth delivery.
+                </p>
+              </div>
             </div>
           )}
         </div>

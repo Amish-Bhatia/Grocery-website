@@ -8,7 +8,7 @@ import {
   Copy,
   Check,
   Percent,
-  DollarSign,
+  IndianRupee,
   Calendar,
 } from "lucide-react";
 
@@ -119,9 +119,7 @@ export default function CouponTable({
         <h3 className="font-semibold text-slate-900 text-base">
           Available Coupons ({coupons.length})
         </h3>
-        <span className="text-xs font-medium text-[#019D3E] bg-emerald-50 px-3 py-1 rounded-full">
-          Real-time Sync
-        </span>
+      
       </div>
 
       <div className="overflow-x-auto">
@@ -197,18 +195,18 @@ export default function CouponTable({
                       </span>
                     ) : (
                       <span className="inline-flex items-center gap-1 rounded-lg bg-blue-50 border border-blue-100 px-2.5 py-1 text-xs font-bold text-blue-700">
-                        <DollarSign size={12} />
-                        ${Number(coupon.discountValue || 0).toFixed(2)} OFF
+                        <IndianRupee size={12} />
+                        ₹{Number(coupon.discountValue || 0).toFixed(2)} OFF
                       </span>
                     )}
                   </td>
 
                   <td className="px-6 py-4 whitespace-nowrap text-xs">
                     <div className="text-slate-800 font-medium">
-                      Min: {coupon.minimumOrderAmount ? `$${coupon.minimumOrderAmount}` : "None"}
+                      Min: {coupon.minimumOrderAmount ? `₹${coupon.minimumOrderAmount}` : "None"}
                     </div>
                     <div className="text-slate-400">
-                      Max: {coupon.maximumDiscountAmount && coupon.maximumDiscountAmount !== Infinity ? `$${coupon.maximumDiscountAmount}` : "Unlimited"}
+                      Max: {coupon.maximumDiscountAmount && coupon.maximumDiscountAmount !== Infinity ? `₹${coupon.maximumDiscountAmount}` : "Unlimited"}
                     </div>
                   </td>
 

@@ -109,12 +109,12 @@ export default function ProductDetails({ product, onSave, onEdit, onClose }) {
 
             <div className="flex items-center gap-3 text-sm text-slate-600 flex-wrap">
               <span className="font-semibold text-slate-900">
-                ${(discount > 0 ? Number(price) * (1 - Number(discount) / 100) : Number(price)).toFixed(2)}{" "}
+                ₹{(discount > 0 ? Number(price) * (1 - Number(discount) / 100) : Number(price)).toFixed(2)}{" "}
                 <span className="text-xs text-slate-400 font-normal">/ {unit}</span>
               </span>
               {discount > 0 && (
                 <>
-                  <span className="text-xs text-slate-400 line-through">${Number(price).toFixed(2)}</span>
+                  <span className="text-xs text-slate-400 line-through">₹{Number(price).toFixed(2)}</span>
                   <span className="text-xs text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded">{discount}% OFF</span>
                 </>
               )}

@@ -160,18 +160,23 @@ const getAllOrders = async (req, res) => {
   }
 };
 
-// Update order status (simplest logic)
+// Update order status and payment status
 const updateOrderStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, paymentStatus } = req.body;
     if (!status) {
       return res.status(400).json({ message: "Status is required" });
     }
 
+    const updateData = { status: status.toLowerCase().trim() };
+    if (paymentStatus) {
+      updateData.paymentStatus = paymentStatus.toLowerCase().trim();
+    }
+
     const order = await Order.findByIdAndUpdate(
       id,
-      { status: status.toLowerCase().trim() },
+      updateData,
       { new: true }
     );
 

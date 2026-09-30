@@ -31,7 +31,7 @@ export default function CouponFilters({
             onChange={(e) => setStatusFilter(e.target.value)}
             className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-800 outline-none focus:border-[#019D3E] transition"
           >
-            <option value="all">All Statuses</option>
+            <option value="all">All Status</option>
             <option value="active">Active Only</option>
             <option value="inactive">Inactive Only</option>
             <option value="expired">Expired / Limit Reached</option>

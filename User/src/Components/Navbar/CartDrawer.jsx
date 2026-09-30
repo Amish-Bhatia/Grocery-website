@@ -62,7 +62,7 @@ export default function CartDrawer({
                     <div className="min-w-0">
                       <h4 className="text-sm font-semibold text-gray-900 truncate">{item.name}</h4>
                       <p className="text-xs text-gray-500 mt-0.5">
-                        {item.quantity} {item.unit || "kg"} x <span className="font-semibold text-gray-900">${Number(item.price).toFixed(2)}</span>
+                        {item.quantity} {item.unit || "kg"} x <span className="font-semibold text-gray-900">₹{Number(item.price).toFixed(2)}</span>
                       </p>
                     </div>
                   </div>
@@ -84,7 +84,7 @@ export default function CartDrawer({
             <div className="p-5 border-t border-gray-100 bg-gray-50 flex flex-col gap-3">
               <div className="flex items-center justify-between text-sm font-semibold text-gray-900">
                 <span className="text-gray-500 font-normal">{cartItems.length} {cartItems.length === 1 ? "Product" : "Products"}</span>
-                <span className="text-lg font-bold text-gray-900">${cartTotal.toFixed(2)}</span>
+                <span className="text-lg font-bold text-gray-900">₹{cartTotal.toFixed(2)}</span>
               </div>
 
               <button

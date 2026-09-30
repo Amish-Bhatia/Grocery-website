@@ -92,7 +92,7 @@ export default function OrderHistory() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className="font-semibold text-gray-900">
-                            ${Number(order.total).toFixed(2)}
+                            ₹{Number(order.total).toFixed(2)}
                           </span>{" "}
                           <span className="text-gray-500 font-normal">
                             ({order.productCount}{" "}

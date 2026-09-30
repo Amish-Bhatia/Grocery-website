@@ -28,23 +28,35 @@ export default function ProductTable({ products, getStockLabel, onView, onEdit, 
                     <span className="text-sm font-medium text-slate-800">{product.name}</span>
                   </div>
                 </td>
+
+                <td className="px-5 py-4 text-sm text-slate-600">{product.category}</td>
+
                 <td className="px-5 py-4 text-sm font-medium text-slate-800">
-                  ${Number(product.price).toFixed(2)}
+                  ₹{Number(product.price).toFixed(2)}
                   {product.originalPrice && product.originalPrice > product.price && (
                     <span className="ml-1.5 text-xs text-slate-400 line-through">
-                      ${Number(product.originalPrice).toFixed(2)}
+                      ₹{Number(product.originalPrice).toFixed(2)}
                     </span>
                   )}
                 </td>
+
                 <td className="px-5 py-4 text-sm text-slate-600">{product.discount ? `${product.discount}%` : "-"}</td>
-                <td className="px-5 py-4"><span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${stock.className}`}>{stock.label}</span></td>
+
                 <td className="px-5 py-4">
+                  
+                  <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${stock.className}`}>{stock.label}</span></td>
+
+                <td className="px-5 py-4">
+
                   <div className="flex items-center justify-end gap-1">
                     <button type="button" onClick={() => onView(product)} className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition hover:bg-blue-50 hover:text-blue-600" title="View product"><Eye size={17} /></button>
+
                     <button type="button" onClick={() => onEdit(product)} className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition hover:bg-emerald-50 hover:text-[#019D3E]" title="Edit product"><Pencil size={17} /></button>
+
                     <button type="button" onClick={() => onDelete(product.id)} className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition hover:bg-red-50 hover:text-red-600" title="Delete product"><Trash2 size={17} /></button>
                   </div>
                 </td>
+
               </tr>
             );
           })}

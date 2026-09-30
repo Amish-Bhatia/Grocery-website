@@ -45,7 +45,7 @@ export default function OrderSuccess({ orderSuccess }) {
                     <span className="text-gray-400">× {item.quantity}</span>
                   </span>
                   <span className="font-semibold text-gray-900">
-                    ${(item.price * item.quantity).toFixed(2)}
+                    ₹{(item.price * item.quantity).toFixed(2)}
                   </span>
                 </div>
               ))}
@@ -68,7 +68,7 @@ export default function OrderSuccess({ orderSuccess }) {
               {orderSuccess.discount > 0 && (
                 <div className="flex justify-between text-[#00B207]">
                   <span>Coupon Discount {orderSuccess.couponCode ? `(${orderSuccess.couponCode})` : ""}</span>
-                  <span className="font-semibold">-${Number(orderSuccess.discount).toFixed(2)}</span>
+                  <span className="font-semibold">-₹{Number(orderSuccess.discount).toFixed(2)}</span>
                 </div>
               )}
               <div className="flex justify-between text-gray-600">
@@ -79,7 +79,7 @@ export default function OrderSuccess({ orderSuccess }) {
               </div>
               <div className="flex justify-between text-base font-bold text-gray-900 pt-2 border-t">
                 <span>Total Paid</span>
-                <span>${Number(orderSuccess.total).toFixed(2)}</span>
+                <span>₹{Number(orderSuccess.total).toFixed(2)}</span>
               </div>
             </div>
           </div>

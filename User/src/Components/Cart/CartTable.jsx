@@ -50,7 +50,7 @@ export default function CartTable({
                   </td>
 
                   <td className="py-5 px-6 whitespace-nowrap text-sm sm:text-base font-semibold text-gray-900">
-                    ${Number(item.price).toFixed(2)}
+                    ₹{Number(item.price).toFixed(2)}
                   </td>
 
                   <td className="py-5 px-6 whitespace-nowrap">
@@ -79,7 +79,7 @@ export default function CartTable({
                   </td>
 
                   <td className="py-5 px-6 whitespace-nowrap text-sm sm:text-base font-bold text-gray-900">
-                    ${itemSubtotal.toFixed(2)}
+                    ₹{itemSubtotal.toFixed(2)}
                   </td>
 
                   <td className="py-5 px-6 text-right whitespace-nowrap">

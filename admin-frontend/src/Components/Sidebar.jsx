@@ -12,6 +12,7 @@ import {
   HelpCircle,
   MessageSquare,
   Ticket,
+  Flame,
 } from "lucide-react";
 
 import { NavLink, useLocation } from "react-router-dom";
@@ -22,6 +23,11 @@ const navItems = [
     path: "/dashboard",
     icon: LayoutDashboard,
     end: true,
+  },
+  {
+    label: "Sales",
+    path: "/dashboard/sales",
+    icon: Flame,
   },
   {
     label: "Products",

@@ -24,12 +24,17 @@ const { seedFaqsIfEmpty } = require("./controller/FAQ-Controller");
 const dashboardRoutes = require("./routes/Dashboard-Routes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const couponRoutes = require("./routes/couponRoute");
+const saleRoutes = require("./routes/Sale-Routes");
+const { seedSalesIfEmpty } = require("./controller/Sale-Controller");
 
 // Seed default testimonials if collection is empty
 seedTestimonialsIfEmpty();
 
 // Seed default FAQs if collection is empty
 seedFaqsIfEmpty();
+
+// Seed default sales if collection is empty
+seedSalesIfEmpty();
 
 // CORS configuration supporting both Admin (5173) and User Storefront (5174)
 const allowedOrigins = [
@@ -73,6 +78,7 @@ app.use("/", faqRoutes);
 app.use("/", dashboardRoutes);
 app.use("/", paymentRoutes);
 app.use("/", couponRoutes);
+app.use("/", saleRoutes);
 app.use("/protected", protectedRoutes);
 
 app.get("/health", (req, res) => res.json({ ok: true }));

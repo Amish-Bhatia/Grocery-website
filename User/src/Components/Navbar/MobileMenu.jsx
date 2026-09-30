@@ -91,7 +91,7 @@ export default function MobileMenu({
             </li>
             <li className="border-b border-gray-100 pb-2">
               <Link to="/cart" className="w-full flex items-center justify-between text-[15px] font-medium text-gray-900 hover:text-[#00B207] py-2 transition-colors" onClick={onClose}>
-                <span>Cart (${cartTotal.toFixed(2)})</span>
+                <span>Cart (₹{cartTotal.toFixed(2)})</span>
               </Link>
             </li>
 

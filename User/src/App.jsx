@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
+import ScrollToTop from './Components/ScrollToTop.jsx'
 import Navbar from './Components/Navbar.jsx'
 import Footer from './Components/Footer.jsx'
 import Home from './pages/Home.jsx'
@@ -26,6 +27,7 @@ import NotFound from './pages/NotFound.jsx'
 function App() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <ScrollToTop />
       <Navbar />
       <main style={{ flex: 1 }}>
         <Routes>

@@ -41,27 +41,41 @@ export default function Orders() {
     fetchOrders();
   }, [fetchOrders]);
 
-  const handleStatusChange = async (orderId, newStatus) => {
+  const handleStatusChange = async (orderId, newStatus, paymentStatus = null) => {
     try {
       setUpdatingId(orderId);
-      const response = await apimethods.putApi(`/update-order-status/${orderId}`, {
-        status: newStatus,
-      });
+      const payload = { status: newStatus };
+      if (paymentStatus) {
+        payload.paymentStatus = paymentStatus;
+      }
+      const response = await apimethods.putApi(`/update-order-status/${orderId}`, payload);
 
       if (response?.success || response?.order) {
         setOrders((prev) =>
-          prev.map((ord) => (ord._id === orderId ? { ...ord, status: newStatus.toLowerCase() } : ord))
+          prev.map((ord) =>
+            ord._id === orderId
+              ? {
+                  ...ord,
+                  status: newStatus.toLowerCase(),
+                  ...(paymentStatus ? { paymentStatus: paymentStatus.toLowerCase() } : {}),
+                }
+              : ord
+          )
         );
 
         if (selectedOrder && selectedOrder._id === orderId) {
-          setSelectedOrder((prev) => ({ ...prev, status: newStatus.toLowerCase() }));
+          setSelectedOrder((prev) => ({
+            ...prev,
+            status: newStatus.toLowerCase(),
+            ...(paymentStatus ? { paymentStatus: paymentStatus.toLowerCase() } : {}),
+          }));
         }
 
         Swal.fire({
           icon: "success",
-          title: "Status Updated",
-          text: `Order status changed to ${newStatus}`,
-          timer: 1300,
+          title: "Order Updated",
+          text: `Order status set to ${newStatus}${paymentStatus ? ` (Payment: ${paymentStatus})` : ""}`,
+          timer: 1500,
           showConfirmButton: false,
         });
       }
@@ -139,7 +153,7 @@ export default function Orders() {
             onChange={(e) => setStatusFilter(e.target.value)}
             className="rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 font-medium outline-none focus:border-[#019D3E] transition"
           >
-            <option value="all">All Statuses</option>
+            <option value="all">All Status</option>
             <option value="pending">Pending</option>
             <option value="processing">Processing</option>
             <option value="on the way">On the way</option>
@@ -154,9 +168,6 @@ export default function Orders() {
           <h3 className="font-semibold text-slate-900 text-base">
             Orders List ({filteredOrders.length})
           </h3>
-          <span className="text-xs font-medium text-[#019D3E] bg-emerald-50 px-3 py-1 rounded-full">
-            Live Records
-          </span>
         </div>
 
         <OrderTable

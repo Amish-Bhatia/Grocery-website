@@ -212,7 +212,7 @@ export default function OrderDetail() {
                     <div className="flex justify-between text-gray-600">
                       <span>Subtotal:</span>
                       <span className="font-medium text-gray-900">
-                        ${Number(order.subtotal).toFixed(2)}
+                        ₹{Number(order.subtotal).toFixed(2)}
                       </span>
                     </div>
                     <div className="flex justify-between text-gray-600">
@@ -235,7 +235,7 @@ export default function OrderDetail() {
                     Total
                   </span>
                   <span className="text-lg font-bold text-[#00B207]">
-                    ${Number(order.total).toFixed(2)}
+                    ₹{Number(order.total).toFixed(2)}
                   </span>
                 </div>
               </div>
@@ -321,13 +321,13 @@ export default function OrderDetail() {
                         </div>
                       </td>
                       <td className="py-4 font-normal text-gray-700 whitespace-nowrap">
-                        ${Number(prod.price).toFixed(2)}
+                        ₹{Number(prod.price).toFixed(2)}
                       </td>
                       <td className="py-4 font-normal text-gray-700 whitespace-nowrap">
                         x{prod.quantity}
                       </td>
                       <td className="py-4 text-right font-semibold text-gray-900 whitespace-nowrap">
-                        ${(Number(prod.price) * Number(prod.quantity)).toFixed(2)}
+                        ₹{(Number(prod.price) * Number(prod.quantity)).toFixed(2)}
                       </td>
                     </tr>
                   ))}

@@ -16,7 +16,7 @@ export default function OrderSummary({
   cartFinalTotal,
 }) {
   const [couponInput, setCouponInput] = useState("");
-
+  
   const handleApply = async (e) => {
     e.preventDefault();
     if (!couponInput.trim()) return;
@@ -72,7 +72,7 @@ export default function OrderSummary({
                 </div>
               </div>
               <span className="text-sm font-semibold text-gray-900 shrink-0">
-                ${(item.price * item.quantity).toFixed(2)}
+                ₹{(item.price * item.quantity).toFixed(2)}
               </span>
             </div>
           ))}
@@ -94,7 +94,7 @@ export default function OrderSummary({
                     </span>
                   </div>
                   <span className="text-[11px] text-gray-500">
-                    Saved ${discountAmount?.toFixed(2)}
+                    Saved ₹{discountAmount?.toFixed(2)}
                   </span>
                 </div>
               </div>
@@ -137,14 +137,14 @@ export default function OrderSummary({
           <div className="flex justify-between text-gray-600">
             <span>Subtotal:</span>
             <span className="font-semibold text-gray-900">
-              ${cartTotal.toFixed(2)}
+              ₹{cartTotal.toFixed(2)}
             </span>
           </div>
 
           {appliedCoupon && (
             <div className="flex justify-between text-[#00B207] font-medium">
               <span>Discount ({appliedCoupon.code} - {discountPercent}%):</span>
-              <span className="font-bold">-${discountAmount.toFixed(2)}</span>
+              <span className="font-bold">-₹{discountAmount.toFixed(2)}</span>
             </div>
           )}
 
@@ -158,11 +158,11 @@ export default function OrderSummary({
             <div className="text-right">
               {appliedCoupon && (
                 <span className="text-xs text-gray-400 line-through block font-normal">
-                  ${cartTotal.toFixed(2)}
+                  ₹{cartTotal.toFixed(2)}
                 </span>
               )}
               <span className="text-lg font-bold text-gray-900">
-                ${finalAmount.toFixed(2)}
+                ₹{finalAmount.toFixed(2)}
               </span>
             </div>
           </div>
@@ -277,9 +277,9 @@ export default function OrderSummary({
             {isSubmitting
               ? "Connecting Gateway..."
               : paymentMethod === "Razorpay"
-              ? `Pay $${finalAmount.toFixed(2)} with Razorpay`
+              ? `Pay ₹${finalAmount.toFixed(2)} with Razorpay`
               : paymentMethod === "Paypal"
-              ? `Pay $${finalAmount.toFixed(2)} with PayPal`
+              ? `Pay ₹${finalAmount.toFixed(2)} with PayPal`
               : "Place Order (Cash on Delivery)"}
           </span>
         </button>

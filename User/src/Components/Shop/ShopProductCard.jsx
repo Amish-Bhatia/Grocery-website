@@ -1,15 +1,19 @@
 import { useNavigate } from "react-router-dom";
-import { ShoppingBag, Star, Heart } from "lucide-react";
+import { ShoppingBag, Star, Heart, Eye } from "lucide-react";
 import { getProductPricing } from "../Home/constants";
+import { useSales } from "../../context/SalesContext";
 
 export default function ShopProductCard({
   product,
   isWishlisted,
   onToggleWishlist,
   onAddToCart,
+  onQuickView,
 }) {
   const navigate = useNavigate();
-  const pricing = getProductPricing(product);
+  const { getProductSaleDiscount } = useSales();
+  const saleDiscount = getProductSaleDiscount ? getProductSaleDiscount(product) : 0;
+  const pricing = getProductPricing(product, saleDiscount);
   const onSale = pricing.onSale;
   const saleLabel = onSale ? `Sale ${pricing.salePercent}%` : "";
   const wishlisted = isWishlisted(product._id);
@@ -25,21 +29,35 @@ export default function ShopProductCard({
           <span />
         )}
 
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleWishlist(product._id);
-          }}
-          className={`w-7 h-7 rounded-full flex items-center justify-center transition shadow-sm cursor-pointer ${
-            wishlisted
-              ? "bg-[#EA4B48] text-white"
-              : "bg-gray-50 hover:bg-[#EA4B48] hover:text-white text-gray-600"
-          }`}
-          title={wishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
-        >
-          <Heart size={14} fill={wishlisted ? "white" : "none"} />
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleWishlist(product._id);
+            }}
+            className={`w-7 h-7 rounded-full flex items-center justify-center transition shadow-sm cursor-pointer ${
+              wishlisted
+                ? "bg-[#EA4B48] text-white"
+                : "bg-gray-50 hover:bg-[#EA4B48] hover:text-white text-gray-600"
+            }`}
+            title={wishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
+          >
+            <Heart size={14} fill={wishlisted ? "white" : "none"} />
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onQuickView) onQuickView(product);
+              else navigate(`/product/${product._id}`);
+            }}
+            className="w-7 h-7 rounded-full bg-gray-50 hover:bg-[#00B207] hover:text-white text-gray-600 flex items-center justify-center transition shadow-sm cursor-pointer"
+            title="Quick View"
+          >
+            <Eye size={14} />
+          </button>
+        </div>
       </div>
 
       <div
@@ -73,11 +91,11 @@ export default function ShopProductCard({
 
         <div className="flex items-center gap-2 mb-2">
           <span className="text-base font-bold text-gray-900">
-            ${pricing.price.toFixed(2)}
+            ₹{pricing.price.toFixed(2)}
           </span>
           {pricing.originalPrice && pricing.originalPrice > pricing.price && (
             <span className="text-xs text-gray-400 line-through">
-              ${pricing.originalPrice.toFixed(2)}
+              ₹{pricing.originalPrice.toFixed(2)}
             </span>
           )}
         </div>

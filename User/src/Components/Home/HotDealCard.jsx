@@ -179,11 +179,11 @@ export default function HotDealCard({
 
         <div className={`flex items-center gap-2 mb-1.5 ${isHovered ? "justify-center" : ""}`}>
           <span className={`${isHovered ? "text-base sm:text-lg" : "text-sm sm:text-base"} font-bold text-gray-900`}>
-            ${Number(product.price).toFixed(2)}
+            ₹{Number(product.price).toFixed(2)}
           </span>
           {product.originalPrice && product.originalPrice > product.price && (
             <span className="text-xs text-gray-400 line-through">
-              ${Number(product.originalPrice).toFixed(2)}
+              ₹{Number(product.originalPrice).toFixed(2)}
             </span>
           )}
         </div>

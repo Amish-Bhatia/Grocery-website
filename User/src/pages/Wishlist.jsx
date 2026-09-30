@@ -182,11 +182,11 @@ export default function Wishlist() {
                               return (
                                 <div className="flex items-center gap-2">
                                   <span className="text-sm sm:text-base font-bold text-gray-900">
-                                    ${pricing.price.toFixed(2)}
+                                    ₹{pricing.price.toFixed(2)}
                                   </span>
                                   {pricing.originalPrice && pricing.originalPrice > pricing.price && (
                                     <span className="text-xs sm:text-sm text-gray-400 line-through">
-                                      ${pricing.originalPrice.toFixed(2)}
+                                      ₹{pricing.originalPrice.toFixed(2)}
                                     </span>
                                   )}
                                 </div>

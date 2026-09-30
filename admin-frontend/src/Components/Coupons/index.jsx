@@ -143,7 +143,7 @@ export default function Coupons() {
         onDeleteCoupon={handleDeleteCoupon}
         togglingId={togglingId}
         getCouponStatus={getCouponStatus}
-      />
+      />                                     
 
       <AddEditModal isOpen={isModalOpen} onClose={() => { setIsModalOpen(false); setCouponToEdit(null); }} couponToEdit={couponToEdit} onSaved={fetchCoupons} />
     </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X, Ticket, Percent, DollarSign, AlertCircle, Sparkles } from "lucide-react";
+import { X, Ticket, Percent, IndianRupee, AlertCircle, Sparkles } from "lucide-react";
 import Swal from "sweetalert2";
 import apimethods from "../../Methods/ApiClient";
 
@@ -141,8 +141,8 @@ export default function AddEditModal({ isOpen, onClose, couponToEdit, onSaved })
             </div>
             <div className="flex flex-wrap gap-2">
               <button type="button" onClick={() => applyPreset("WELCOME10", "10% off for all new shoppers", "percentage", 10, 20)} className="rounded-lg bg-white border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-700 hover:border-[#019D3E] hover:text-[#019D3E] transition shadow-2xs">🎉 10% Welcome</button>
-              <button type="button" onClick={() => applyPreset("FRESH20", "20% off on grocery orders over $50", "percentage", 20, 50)} className="rounded-lg bg-white border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-700 hover:border-[#019D3E] hover:text-[#019D3E] transition shadow-2xs">🥬 20% Fresh</button>
-              <button type="button" onClick={() => applyPreset("FLAT15", "$15 flat discount on orders over $60", "fixed", 15, 60)} className="rounded-lg bg-white border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-700 hover:border-[#019D3E] hover:text-[#019D3E] transition shadow-2xs">💵 $15 Flat Off</button>
+              <button type="button" onClick={() => applyPreset("FRESH20", "20% off on grocery orders over ₹500", "percentage", 20, 500)} className="rounded-lg bg-white border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-700 hover:border-[#019D3E] hover:text-[#019D3E] transition shadow-2xs">🥬 20% Fresh</button>
+              <button type="button" onClick={() => applyPreset("FLAT150", "₹150 flat discount on orders over ₹600", "fixed", 150, 600)} className="rounded-lg bg-white border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-700 hover:border-[#019D3E] hover:text-[#019D3E] transition shadow-2xs">💵 ₹150 Flat Off</button>
             </div>
           </div>
         )}
@@ -174,23 +174,23 @@ export default function AddEditModal({ isOpen, onClose, couponToEdit, onSaved })
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Type</label>
               <div className="grid grid-cols-2 gap-2">
                 <button type="button" onClick={() => setFormData((prev) => ({ ...prev, discountType: "percentage" }))} className={`flex items-center justify-center gap-1.5 rounded-xl border py-2.5 text-xs font-semibold transition cursor-pointer ${formData.discountType === "percentage" ? "border-[#019D3E] bg-emerald-50 text-[#019D3E]" : "border-slate-200 text-slate-600"}`}><Percent size={14} /> % Percent</button>
-                <button type="button" onClick={() => setFormData((prev) => ({ ...prev, discountType: "fixed" }))} className={`flex items-center justify-center gap-1.5 rounded-xl border py-2.5 text-xs font-semibold transition cursor-pointer ${formData.discountType === "fixed" ? "border-[#019D3E] bg-emerald-50 text-[#019D3E]" : "border-slate-200 text-slate-600"}`}><DollarSign size={14} /> $ Fixed</button>
+                <button type="button" onClick={() => setFormData((prev) => ({ ...prev, discountType: "fixed" }))} className={`flex items-center justify-center gap-1.5 rounded-xl border py-2.5 text-xs font-semibold transition cursor-pointer ${formData.discountType === "fixed" ? "border-[#019D3E] bg-emerald-50 text-[#019D3E]" : "border-slate-200 text-slate-600"}`}><IndianRupee size={14} /> ₹ Fixed</button>
               </div>
             </div>
             <div>
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Discount Value *</label>
-              <input type="number" step="any" min="1" max={formData.discountType === "percentage" ? "100" : undefined} name="discountValue" value={formData.discountValue} onChange={handleChange} placeholder={formData.discountType === "percentage" ? "e.g. 20" : "e.g. 15.00"} className={`w-full rounded-xl border ${formErrors.discountValue ? "border-red-400" : "border-slate-200"} px-4 py-2.5 text-sm text-slate-800 outline-none focus:border-[#019D3E] transition`} />
+              <input type="number" step="any" min="1" max={formData.discountType === "percentage" ? "100" : undefined} name="discountValue" value={formData.discountValue} onChange={handleChange} placeholder={formData.discountType === "percentage" ? "e.g. 20" : "e.g. 150.00"} className={`w-full rounded-xl border ${formErrors.discountValue ? "border-red-400" : "border-slate-200"} px-4 py-2.5 text-sm text-slate-800 outline-none focus:border-[#019D3E] transition`} />
               {formErrors.discountValue && <p className="mt-1 flex items-center gap-1 text-xs text-red-500"><AlertCircle size={12} /> {formErrors.discountValue}</p>}
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Min Order ($)</label>
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Min Order (₹)</label>
               <input type="number" step="any" min="0" name="minimumOrderAmount" value={formData.minimumOrderAmount} onChange={handleChange} placeholder="0 (None)" className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-[#019D3E]" />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Max Cap ($)</label>
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Max Cap (₹)</label>
               <input type="number" step="any" min="0" name="maximumDiscountAmount" value={formData.maximumDiscountAmount} onChange={handleChange} placeholder="Unlimited" className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-[#019D3E]" />
             </div>
             <div>
